@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "safety-chores-rl"
+version = "0.1.0.dev0"
+description = "Independent replay rollout APIs and budgeted search for Safety-CHORES"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+native = ["numpy>=1.24"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["safety_chores_rl", "safety_chores_rl.*"]
+
+[tool.setuptools.data-files]
+"share/safety-chores-rl" = ["THIRD_PARTY_NOTICES.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
