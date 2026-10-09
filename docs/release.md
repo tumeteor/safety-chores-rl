@@ -13,8 +13,8 @@ checkout cannot yet install the native simulator on a new machine.
 Publication audit on 2026-10-09: the six local commits were inspected across
 84 unique file blobs. Targeted scans found no embedded credentials, private
 installation paths, private controller references, checkpoints, or ignored
-research artifacts in the tracked history. This source-boundary check does not
-replace dependency licensing review or native installation validation.
+research artifacts in the tracked history. Native installation validation is
+still required separately.
 
 Latest verification on 2026-10-09:
 
@@ -72,15 +72,14 @@ Earlier verification on 2026-10-06:
 Still required before a usable simulator release:
 
 - Reproduce the demonstrated successful trajectory on a clean installation with
-  an independently distributable policy. Add deeper planning roots, multiple
+  the pinned external policy and checkpoint. Add deeper planning roots, multiple
   tasks/seeds, independent samples, and held-out evaluation.
 - Resolve the observed intermittent manipulation-camera integrity fault, or
   explicitly bound the affected configuration with a validated rejection/recovery
   policy. The added failure capture is diagnostic instrumentation, not a fix.
 - Curated simulator source patches and a tested public build/install recipe.
 - Dependency/environment pins and an installation check outside the existing setup.
-- Source license and redistribution review for simulator components and assets.
-- Final source, Git history, and distribution review after the remaining work.
+- Final source, Git history, and package-content checks after the remaining work.
 
 The runtime reconstructs episodes using reset and action replay. Matching exposed
 state and images does not establish exact hidden PhysX checkpoint restoration.

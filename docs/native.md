@@ -135,8 +135,7 @@ python tools/render_first_success.py \
 
 The renderer preserves the camera images and adds labels and a progress strip.
 Playback is eight actions per second, with a final hold; this is not wall time.
-Checkpoint redistribution and a clean upstream installation remain separate
-release gates.
+A clean upstream installation remains a release gate.
 
 ## Trajectory visualization
 

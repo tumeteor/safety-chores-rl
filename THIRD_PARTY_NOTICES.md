@@ -12,6 +12,5 @@ not bundled in this draft. Runtime configuration pins local external sources and
 artifacts by SHA256.
 
 The observation/cost helpers were developed for the modified simulator and
-retained separately from controller implementations. The source license and
-component redistribution inventory still need rights-holder review. This draft
-does not grant an open-source license.
+retained separately from controller implementations. This draft does not grant
+an open-source license.

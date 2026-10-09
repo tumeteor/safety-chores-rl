@@ -76,7 +76,7 @@ PYTHONHASHSEED=0 CUBLAS_WORKSPACE_CONFIG=:4096:8 xvfb-run -a \
 
 The simulator, tasks/assets, compatible SafeVLA environment, and checkpoint are
 external dependencies. This remains a local release draft; portable native
-installation, broader validation, and redistribution review remain
+installation and broader validation remain
 [release work](docs/release.md).
 
 ## Try the portable examples
