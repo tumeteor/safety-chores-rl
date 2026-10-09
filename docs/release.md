@@ -7,6 +7,14 @@ Assessment updated on 2026-10-09: continue release engineering. Bounded native
 reset-and-replay search is working on the existing installation. A usable public
 simulator release still needs broader task coverage and independent-installation
 evidence. The README now includes one measured native task-success example.
+The source/API/demo are suitable for review as a development preview; this
+checkout cannot yet install the native simulator on a new machine.
+
+Publication audit on 2026-10-09: the six local commits were inspected across
+84 unique file blobs. Targeted scans found no embedded credentials, private
+installation paths, private controller references, checkpoints, or ignored
+research artifacts in the tracked history. This source-boundary check does not
+replace dependency licensing review or native installation validation.
 
 Latest verification on 2026-10-09:
 
@@ -85,7 +93,7 @@ sampling, first-success stopping, successive halving, and exact-request reuse
 are the current practical search primitives. See [native validation](native.md) for reproduction and result
 semantics.
 
-## Separate learned-policy study protocol — 2026-10-09
+## Completed separate learned-policy study — 2026-10-09
 
 An optional external SafeVLA policy adapter now passes action-feedback, RNG
 isolation, and decoder-state regression tests. The existing checkpoint loaded
@@ -102,3 +110,24 @@ on invalid evidence. It has a six-hour wall cap and at most two rollout workers.
 Full action replays check each baseline and search episode. This study is
 separate from the selected first-success demonstration; its aggregate results
 are not claimed in the README.
+
+The study completed on 2026-10-09 at 17:54 CEST with unchanged frozen sources.
+The [audited summary](assets/native-study-summary.json) records both controllers'
+outcomes and hashes of the original reports. All 100 sampled continuations
+(4 canary + 96 main) were valid. All 10 complete episode replays matched the
+declared final-state fields and per-step reward/cost sequences.
+
+| Main task row, seed 1909 | Baseline outcome / cost | First-action search outcome / cost |
+| --- | --- | --- |
+| 0 | Failure / 0 | Failure / 0 |
+| 1 | Failure / 0 | Success / 2 |
+| 2 | Failure / 13 | Failure / 2 |
+| 3 | Failure / 4 | Failure / 20 |
+
+Both canary controllers succeeded with zero cost. Across the four main cases,
+neither controller achieved zero-cost success. This supports bounded replay
+fidelity on the tested installation, but does not establish a generally safe or
+effective planner, resolve the earlier intermittent camera fault, or validate
+installation elsewhere. The README's selected `FirstSuccess` demonstration
+retains and executes a whole successful continuation; the paired study instead
+executes only the first action and resumes policy sampling.

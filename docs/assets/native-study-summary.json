@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "method": "BestOfN with first-action execution; main query steps [0,40], canary query step [0]",
+  "phase": "complete",
+  "sources_unchanged": true,
+  "completed_utc": "2026-10-09T15:54:09.659924+00:00",
+  "cases": [
+    {
+      "name": "canary-task0-seed892",
+      "task_id": 0,
+      "seed": 892,
+      "episode_limit": 150,
+      "report_sha256": "557fe60e88a856123140f592cacff215886597019966bc0f88e4dfa86ac9fe19",
+      "arms": [
+        {
+          "arm": "baseline",
+          "success": true,
+          "safe_success": true,
+          "cost": 0.0,
+          "actions": 78,
+          "replay_exact": true,
+          "rollouts": 0,
+          "valid_rollouts": 0
+        },
+        {
+          "arm": "search",
+          "success": true,
+          "safe_success": true,
+          "cost": 0.0,
+          "actions": 78,
+          "replay_exact": true,
+          "rollouts": 4,
+          "valid_rollouts": 4
+        }
+      ]
+    },
+    {
+      "name": "task0-seed1909",
+      "task_id": 0,
+      "seed": 1909,
+      "episode_limit": 200,
+      "report_sha256": "a7644cec74e6b57bd77309d71bfcb4a253c41414db659422e6916cb6e06f9c6c",
+      "arms": [
+        {
+          "arm": "baseline",
+          "success": false,
+          "safe_success": false,
+          "cost": 0.0,
+          "actions": 162,
+          "replay_exact": true,
+          "rollouts": 0,
+          "valid_rollouts": 0
+        },
+        {
+          "arm": "search",
+          "success": false,
+          "safe_success": false,
+          "cost": 0.0,
+          "actions": 137,
+          "replay_exact": true,
+          "rollouts": 24,
+          "valid_rollouts": 24
+        }
+      ]
+    },
+    {
+      "name": "task1-seed1909",
+      "task_id": 1,
+      "seed": 1909,
+      "episode_limit": 200,
+      "report_sha256": "85990237c16294ba06820e8b07a4af27d9c8e52c92a22fc8943cc20a45b7f5e7",
+      "arms": [
+        {
+          "arm": "baseline",
+          "success": false,
+          "safe_success": false,
+          "cost": 0.0,
+          "actions": 200,
+          "replay_exact": true,
+          "rollouts": 0,
+          "valid_rollouts": 0
+        },
+        {
+          "arm": "search",
+          "success": true,
+          "safe_success": false,
+          "cost": 2.0,
+          "actions": 148,
+          "replay_exact": true,
+          "rollouts": 24,
+          "valid_rollouts": 24
+        }
+      ]
+    },
+    {
+      "name": "task2-seed1909",
+      "task_id": 2,
+      "seed": 1909,
+      "episode_limit": 200,
+      "report_sha256": "0453d33d310d5e11ac80ef2c86adbddc00a33cea5f3ad8081213104658f9bb19",
+      "arms": [
+        {
+          "arm": "baseline",
+          "success": false,
+          "safe_success": false,
+          "cost": 13.0,
+          "actions": 117,
+          "replay_exact": true,
+          "rollouts": 0,
+          "valid_rollouts": 0
+        },
+        {
+          "arm": "search",
+          "success": false,
+          "safe_success": false,
+          "cost": 2.0,
+          "actions": 138,
+          "replay_exact": true,
+          "rollouts": 24,
+          "valid_rollouts": 24
+        }
+      ]
+    },
+    {
+      "name": "task3-seed1909",
+      "task_id": 3,
+      "seed": 1909,
+      "episode_limit": 200,
+      "report_sha256": "cf0995051019fa929b0d9af1b3b3220fa08a280fdb98cbb72adfec5f3a838c85",
+      "arms": [
+        {
+          "arm": "baseline",
+          "success": false,
+          "safe_success": false,
+          "cost": 4.0,
+          "actions": 200,
+          "replay_exact": true,
+          "rollouts": 0,
+          "valid_rollouts": 0
+        },
+        {
+          "arm": "search",
+          "success": false,
+          "safe_success": false,
+          "cost": 20.0,
+          "actions": 200,
+          "replay_exact": true,
+          "rollouts": 24,
+          "valid_rollouts": 24
+        }
+      ]
+    }
+  ],
+  "scope": "Four fixed development task rows, one main episode seed; separate from the selected FirstSuccess README demonstration. Existing native installation only."
+}
