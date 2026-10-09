@@ -137,3 +137,35 @@ The renderer preserves the camera images and adds labels and a progress strip.
 Playback is eight actions per second, with a final hold; this is not wall time.
 Checkpoint redistribution and a clean upstream installation remain separate
 release gates.
+
+## Trajectory visualization
+
+The original example stores state hashes and images, not world coordinates.
+Recover robot base positions and headings with a forced replay of each saved
+rollout. Use the same runtime package, native configuration, and policy checkpoint
+as the original run: every root and action must match its original signature.
+The collector reads cached event metadata without issuing extra render or move
+commands. Replay is additional work; it is excluded from the README search time.
+
+```sh
+PYTHONHASHSEED=0 CUBLAS_WORKSPACE_CONFIG=:4096:8 xvfb-run -a \
+  python examples/native_trajectory_replay.py \
+  --config runs/native.json --policy-config runs/policy.json \
+  --report runs/first-success/report.json --out runs/trajectory-replay \
+  --vulkan-device 0
+
+python -m pip install matplotlib pillow
+python tools/plot_trajectories.py \
+  --trajectories runs/trajectory-replay/trajectories.json --out runs/first-success/visuals
+python tools/render_first_success.py \
+  --report runs/first-success/report.json --frames runs/first-success/frames \
+  --trajectories runs/trajectory-replay/trajectories.json --out runs/first-success/visuals
+```
+
+The plot shows robot base centres in Unity world X/Z coordinates (metres), over
+the house's room floor polygons. Doors and furniture are omitted, so the outlines
+are not an occupancy or collision map. Rotation and arm motion do not necessarily
+change base position. The animated map uses recovered poses and requires every
+replayed camera hash to match the corresponding original live frame. In the
+published selected example, both paths (85 and 75 actions) matched every saved
+signature, and all 152 successful-path camera images matched the live frames.

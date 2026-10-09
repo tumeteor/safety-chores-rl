@@ -12,10 +12,23 @@ and an external SafeVLA policy on an existing simulator installation.
 
 Task: **go to a basketball and grasp that basketball**.
 
-![Navigation and manipulation cameras from the 75-action successful execution](docs/assets/first-success.gif)
+![Top-down trajectories: the failed continuation and the successful executed route](docs/assets/first-success-trajectories.svg)
+
+Orange is the failed rollout; green is the successful route. The robot base
+travels 3.6 m and 6.9 m respectively. Coordinates were recovered by replaying the
+saved actions: **all 160 replayed actions matched their original state hashes**.
+The map shows room outlines, with doors and furniture omitted. Turning and arm
+movement can leave the base position unchanged.
+
+![Navigation and manipulation cameras alongside animated trajectory progress](docs/assets/first-success.gif)
 
 Original simulator observations, shown at 8 actions/second with a pause at the
-end. Playback is accelerated; the timing below includes the actual work.
+end. The map adds base position, heading, and progress along the successful path.
+Its replayed camera hashes match all 152 original live images, aligning the map
+with both camera views. Playback is accelerated; the timing below includes the
+original search/execution work, excluding the later visualization replay.
+See [trajectory coordinates](docs/assets/first-success-trajectories.json) and
+[reproduction commands](docs/native.md#trajectory-visualization).
 
 | Measured on 2026-10-09 | Result |
 | --- | --- |
