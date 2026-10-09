@@ -3,8 +3,9 @@
 The native adapter currently requires Linux, an NVIDIA/Vulkan environment,
 the modified simulator player, a compatible SafeVLA installation, and local
 benchmark tasks, houses, and assets. Installing this Python package does not
-install those components. A portable simulator build/install recipe remains a
-release gate. The Python-only examples do not establish native task success.
+install those components. The current scope uses the tested existing environment;
+fresh-environment installation testing is outside the release criteria.
+The Python-only examples do not establish native task success.
 
 Pin the existing installation explicitly:
 
@@ -64,8 +65,8 @@ in-process wall budget; use an outer process timeout for unattended runs.
 Before publishing a native task-success example, freeze its task IDs, seeds,
 policy/candidate source, compute budget, and success criteria. Retain failures
 and refusals as well as successes. Validate later execution roots and complete
-action replays, and reproduce the result on a clean installation. A declared
-oracle or scripted fixture must be labeled as such.
+action replays on the declared setup. A declared oracle or scripted fixture must
+be labeled as such.
 
 ## Learned continuation validation (experimental)
 
@@ -135,7 +136,6 @@ python tools/render_first_success.py \
 
 The renderer preserves the camera images and adds labels and a progress strip.
 Playback is eight actions per second, with a final hold; this is not wall time.
-A clean upstream installation remains a release gate.
 
 ## Trajectory visualization
 

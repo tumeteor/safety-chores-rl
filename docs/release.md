@@ -3,18 +3,17 @@
 No public repository, remote, release, or package publication has been created.
 The current source tree is an independent benchmark/API draft.
 
-Assessment updated on 2026-10-09: continue release engineering. Bounded native
-reset-and-replay search is working on the existing installation. A usable public
-simulator release still needs broader task coverage and independent-installation
-evidence. The README now includes one measured native task-success example.
-The source/API/demo are suitable for review as a development preview; this
-checkout cannot yet install the native simulator on a new machine.
+Assessment updated on 2026-10-09: bounded native reset-and-replay search is working
+on the existing installation. The README includes one measured native task-success
+example. The source/API/demo are suitable for review as a development preview
+targeting that tested environment. Fresh-machine or fresh-environment installation
+checks are outside the current release criteria. The native player, policy, and
+assets remain external prerequisites; broader task coverage remains follow-up work.
 
 Publication audit on 2026-10-09: the six local commits were inspected across
 84 unique file blobs. Targeted scans found no embedded credentials, private
 installation paths, private controller references, checkpoints, or ignored
-research artifacts in the tracked history. Native installation validation is
-still required separately.
+research artifacts in the tracked history.
 
 Latest verification on 2026-10-09:
 
@@ -69,17 +68,19 @@ Earlier verification on 2026-10-06:
   existing installation and uniform-random continuation. Branches took about
   30–32 seconds each, including reset/replay overhead.
 
-Still required before a usable simulator release:
+Remaining engineering for the tested configuration:
 
-- Reproduce the demonstrated successful trajectory on a clean installation with
-  the pinned external policy and checkpoint. Add deeper planning roots, multiple
-  tasks/seeds, independent samples, and held-out evaluation.
+- Record the setup commands and dependency versions for the tested native
+  environment, including its pinned external policy and checkpoint.
 - Resolve the observed intermittent manipulation-camera integrity fault, or
   explicitly bound the affected configuration with a validated rejection/recovery
   policy. The added failure capture is diagnostic instrumentation, not a fix.
-- Curated simulator source patches and a tested public build/install recipe.
-- Dependency/environment pins and an installation check outside the existing setup.
+- Curate simulator source patches and document the tested player configuration.
 - Final source, Git history, and package-content checks after the remaining work.
+
+Broader evaluation can add deeper planning roots, more tasks/seeds, independent
+samples, and held-out cases. The selected README demonstration does not claim
+those results.
 
 The runtime reconstructs episodes using reset and action replay. Matching exposed
 state and images does not establish exact hidden PhysX checkpoint restoration.
