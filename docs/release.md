@@ -66,3 +66,20 @@ search and fast hidden-state checkpoint restoration are not established. Budgete
 sampling, successive halving, and exact-request reuse are the current practical
 search primitives. See [the native probe](native.md) for reproduction and result
 semantics.
+
+## Pending learned-policy study — 2026-10-09
+
+An optional external SafeVLA policy adapter now passes action-feedback, RNG
+isolation, and decoder-state regression tests. The existing checkpoint loaded
+with zero missing/unexpected model keys. The expanded suite passed 40 tests on
+Linux; Windows passed 36 with two skips (Linux process cleanup and the optional
+Torch test module). These checks do not establish native task success.
+
+A bounded canary gates a four-task paired baseline/search study on the existing
+installation. Main tasks are fixed benchmark rows 0, 1, 2, 3 with seed 1909,
+200-action caps, queries at steps 0/40, three policy-ranked candidates, and four
+continuation seeds per candidate. Canary task 0 uses separate seeds and a
+smaller budget. The study retains task failures and unsafe outcomes and stops
+on invalid evidence. It has a six-hour wall cap and at most two rollout workers.
+Full action replays check each baseline and search episode. No release gate is
+closed until the native receipts are audited.

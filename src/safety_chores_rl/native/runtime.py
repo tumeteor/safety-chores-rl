@@ -181,6 +181,8 @@ class SafetyChoresRuntime:
         self.policy.seed_suffix(seed)
 
     def candidate_preview(self):
+        if hasattr(self.policy, 'candidate_preview'):
+            return self.policy.candidate_preview(self._policy_observation())
         return dict(actions=list(range(len(self.action_names))), action_names=list(self.action_names))
 
     def snapshot(self):

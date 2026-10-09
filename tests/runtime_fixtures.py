@@ -49,6 +49,11 @@ class SeedTimingRuntime(GridRuntime):
         super().seed_suffix(seed)
 
 
+class InspectableGridRuntime(GridRuntime):
+    def candidate_preview(self):
+        return dict(actions=[0, 1, 2, 3])
+
+
 class DescendantRuntime(BanditRuntime):
     def __init__(self, pid_path):
         super().__init__()
