@@ -76,6 +76,20 @@ def test_partial_error_does_not_erase_good_candidates():
         assert failed.score is None and failed.results[0].success is None
 
 
+def test_runtime_errors_report_reserved_work_and_are_not_cached():
+    spec = bandit(fail_action=2)
+    with Episode(spec, max_steps=4) as env, RolloutSession(spec) as session:
+        root = session.capture_root(env)
+        for _ in range(2):
+            result = session.rollout(root, (2,), budget=RolloutBudget(4))
+            assert result.status == 'error' and result.success is None
+            assert result.native_steps == 4 and not result.cache_hit
+        plan = BestOfN(session).plan(root, [(2,), (3,)], sample_seeds=[0],
+            rollout_budget=RolloutBudget(4), search_budget=SearchBudget(max_native_steps=4))
+        assert plan.status == 'budget_exhausted' and plan.action is None
+        assert plan.usage['native_steps'] == 4
+
+
 def test_foreign_released_and_stale_roots_rejected():
     spec = grid()
     with Episode(spec) as env, RolloutSession(spec) as session, RolloutSession(spec) as other:

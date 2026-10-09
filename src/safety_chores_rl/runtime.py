@@ -179,6 +179,9 @@ def execute(runtime: Runtime, request: RolloutRequest) -> RolloutResult:
         except Exception as exc:
             result = RolloutResult(**base, status="error", stop_reason="cleanup_error",
                                    error=f"{type(exc).__name__}: {exc}")
-    return replace(result, replay_steps=replay_steps, native_steps=replay_steps + len(actions),
+    # A failed advance may have moved the simulator before raising. Its exact
+    # work is unknown, so do not refund the reservation for an invalid execution.
+    native_steps = request.reservation if result.status == 'error' else replay_steps + len(actions)
+    return replace(result, replay_steps=replay_steps, native_steps=native_steps,
                    actions=tuple(actions), rewards=tuple(rewards), costs=tuple(costs),
                    checks_json=canonical(checks), elapsed_seconds=time.monotonic() - started)

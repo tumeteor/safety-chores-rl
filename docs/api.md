@@ -112,3 +112,24 @@ Custom runtimes must ensure reset fidelity and deterministic seeded behavior.
 Matching declared fields is evidence of replay fidelity, not proof of equality
 of unobservable engine state. Changing runtime code or artifacts requires a new
 session and configuration identity.
+
+## Native runtime and evidence
+
+See [native validation](native.md) for the external installation requirements,
+configuration command, and bounded plan/execute/replan example. The native
+runtime accepts `diagnostics_dir` as an optional persistent output directory.
+Each runtime creates a unique subdirectory; each reset creates an episode
+directory. Camera checks, renderer metadata, and the Unity log survive normal
+runtime shutdown there. Without this option, diagnostic files are temporary.
+
+A camera mismatch remains an invalid execution. Capture records both existing
+arrays and their hashes; it does not refresh observations, retry an action, or
+relax the equality check. If capture itself fails, the integrity error still
+propagates. Retained files can be incomplete after a hard process termination.
+Diagnostics may contain observations, local paths, and scene metadata; choose
+which files to publish separately from the source distribution.
+
+For runtime errors, `native_steps` reports the reserved upper bound because an
+action may have executed before the error was raised. The partial action trace
+contains only transitions that returned successfully. Search-budget accounting
+also charges the reservation; an invalid result is never cached as evidence.

@@ -16,6 +16,29 @@ def canonical_hash(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, allow_nan=False).encode()).hexdigest()
 
 
+def checked_image(current, sensor, *, camera, step, out):
+    """Compare existing arrays; failure capture never refreshes a camera or retries."""
+    import numpy as np
+    if current.shape == sensor.shape and np.array_equal(current, sensor):
+        return hashlib.sha256(current.tobytes()).hexdigest()
+    evidence = Path(out)/f'image-mismatch-{step}-{camera}'
+    capture_error = None
+    try:
+        np.savez_compressed(str(evidence)+'.npz', current=current, sensor=sensor)
+        detail = dict(camera=camera, step=step, current_shape=list(current.shape),
+                      sensor_shape=list(sensor.shape),
+                      current_sha256=hashlib.sha256(current.tobytes()).hexdigest(),
+                      sensor_sha256=hashlib.sha256(sensor.tobytes()).hexdigest())
+        if current.shape == sensor.shape:
+            detail['different_elements'] = int(np.count_nonzero(current != sensor))
+        Path(str(evidence)+'.json').write_text(json.dumps(detail, indent=2)+'\n', encoding='utf-8')
+    except Exception as exc:
+        capture_error = f'{type(exc).__name__}: {exc}'
+    raise ObservationIntegrityError(
+        f'Policy sensor is not the current ordered {camera} image; '
+        + (f'failure capture failed: {capture_error}' if capture_error else f'evidence: {evidence}'))
+
+
 def validate_receipts(checks):
     if (not isinstance(checks, list) or len(checks) != 2
             or any(c.get('profile') != PROFILE or c.get('failure')
@@ -96,9 +119,8 @@ class OrderedProfile:
             cutoff = round(array.shape[1]*6/396)
             current = array[:, cutoff:-cutoff, :3] if cutoff else array[:, :, :3]
             sensor = np.asarray(obs.raw[key])
-            if current.shape != sensor.shape or not np.array_equal(current, sensor):
-                raise ObservationIntegrityError('Policy sensor is not the current ordered ' + camera + ' image')
-            images[camera] = hashlib.sha256(current.tobytes()).hexdigest()
+            images[camera] = checked_image(current, sensor, camera=camera,
+                                           step=self.task.num_steps_taken(), out=self.out)
         receipts = self.command('GetObservationOrderedLighting').metadata['actionReturn']
         validate_receipts(receipts)
         row = dict(step=self.task.num_steps_taken(), images=images,

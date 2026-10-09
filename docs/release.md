@@ -3,7 +3,38 @@
 No public repository, remote, release, or package publication has been created.
 The current source tree is an independent benchmark/API draft.
 
-Verified on 2026-10-06:
+Assessment updated on 2026-10-09: continue release engineering. Bounded native
+reset-and-replay search is working on the existing installation. A usable public
+simulator release still needs task-success and independent-installation evidence.
+
+Verified on 2026-10-09:
+
+- Portable Windows Python 3.10 tests: 34 passed, one Linux-only test skipped.
+  Linux tests: 35 passed, including owned-process timeout cleanup.
+- Standalone native plan/execute/replan: two rounds, two candidates and two
+  continuation samples per round, eight valid branches, unchanged live roots,
+  and two executed actions after an eight-action prefix. Task 0, seed 892,
+  150-action episode cap, uniform-random continuation, one worker.
+- Every branch terminated with task failure after 2 or 15 branch actions;
+  all root comparison fields matched. The full remaining horizon was available,
+  but this probe does not validate 150 executed actions or task success. Live
+  cumulative cost was zero; live task success remained unresolved after ten
+  total actions. Total elapsed time was 373.9 seconds; branch execution including
+  replay/reset took 34.9–45.0 seconds each on a shared GPU.
+- Persistent native diagnostics and camera-mismatch capture preserve evidence
+  without changing or relaxing the equality check. Failed startup cleanup no
+  longer evaluates the upstream lazy controller and attempts a second launch.
+- A wheel built with `uv build`, installed in a fresh Python environment, and
+  ran the six-action synthetic task-success example. Wheel content inspection
+  found no private controller modules, paper references, or private paths.
+  This is Python-package validation, not a clean native simulator installation.
+
+The first native attempt lacked a virtual display and failed during startup;
+its receipt is preserved separately. The passing attempt used `xvfb-run -a`.
+An isolated pip-based wheel build could not access its package index; the
+subsequent isolated uv build succeeded.
+
+Earlier verification on 2026-10-06:
 
 - Portable Windows Python 3.10 tests: 23 passed, one Linux-only test skipped.
 - Independent native adapter: four valid short candidate/continuation branches,
@@ -14,14 +45,24 @@ Verified on 2026-10-06:
 
 Still required before a usable simulator release:
 
-- A complete native plan/execute/replan validation and a reproducible task-success
-  example. Neither follows from the short smoke or synthetic task examples.
+- A reproducible native task-success example using an independently distributable
+  continuation policy or explicitly labeled oracle. Add deeper execution roots,
+  full successful action replays, multiple tasks/seeds, and independent samples.
+- Resolve the observed intermittent manipulation-camera integrity fault, or
+  explicitly bound the affected configuration with a validated rejection/recovery
+  policy. The added failure capture is diagnostic instrumentation, not a fix.
 - Curated simulator source patches and a tested public build/install recipe.
 - Dependency/environment pins and an installation check outside the existing setup.
 - Source license and redistribution review for simulator components and assets.
-- Final source, Git history, archive, and wheel review.
+- Final source, Git history, and distribution review after the remaining work.
 
 The runtime reconstructs episodes using reset and action replay. Matching exposed
 state and images does not establish exact hidden PhysX checkpoint restoration.
 Deep search can incur substantial reset/replay cost. Treat this checkout as a
 development draft, not a ready public benchmark release.
+
+Full-horizon candidate evaluation is supported; arbitrary exhaustive action-tree
+search and fast hidden-state checkpoint restoration are not established. Budgeted
+sampling, successive halving, and exact-request reuse are the current practical
+search primitives. See [the native probe](native.md) for reproduction and result
+semantics.

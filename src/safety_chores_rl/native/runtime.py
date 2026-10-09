@@ -38,7 +38,8 @@ class SafetyChoresRuntime:
     Each process must own its runtime and configure its external dependencies.
     """
     def __init__(self, *, config, vulkan_device=0, include_rgb=False,
-                 policy_factory='safety_chores_rl.native.policy:UniformPolicy', policy_config=None):
+                 policy_factory='safety_chores_rl.native.policy:UniformPolicy', policy_config=None,
+                 diagnostics_dir=None):
         if sys.platform != 'linux':
             raise RuntimeError('Native benchmark player requires Linux')
         integer(vulkan_device, 'vulkan_device')
@@ -52,6 +53,10 @@ class SafetyChoresRuntime:
         self._source_identity = digest({p.relative_to(Path(__file__).parents[1]).as_posix(): file_hash(p)
             for p in Path(__file__).parents[1].rglob('*.py')})
         try:
+            self.evidence_dir = self.folder
+            if diagnostics_dir is not None:
+                self.evidence_dir = Path(diagnostics_dir).expanduser().resolve()/self.folder.name
+                self.evidence_dir.mkdir(parents=True, exist_ok=False)
             player = Path(self.cfg['player']['path'])
             shutil.copytree(player.parent, self.folder/'player')
             self.player = self.folder/'player'/player.name
@@ -68,7 +73,7 @@ class SafetyChoresRuntime:
             from ai2thor.controller import Controller
             self._controller_class = Controller
             self._original_unity_command = Controller.unity_command
-            configure_process(self.folder)
+            configure_process(self.evidence_dir)
             from utils.data_utils import load_dataset_from_path
             self.houses = load_dataset_from_path(split_to_path={'val': self.cfg['houses']['path']})['val']
         except BaseException:
@@ -104,7 +109,7 @@ class SafetyChoresRuntime:
         self._stack.enter_context(checked_native_seeds(self._controller_class, receipts))
         self._stack.enter_context(private_asset_staging(ExternalBuild, self.player, self.folder/'assets'))
         self._counter += 1
-        out = self.folder/f'episode-{self._counter}'
+        out = self.evidence_dir/f'episode-{self._counter}'
         out.mkdir()
         self.actions, self.report = [], {}
         row = self.tasks[task_id]
@@ -204,11 +209,14 @@ class SafetyChoresRuntime:
             self.policy = None
             try:
                 if self.sampler is not None:
-                    controller = getattr(self.sampler, 'controller', None)
+                    # Upstream controller is lazy: reading it after failed startup
+                    # would launch a second simulator during exception cleanup.
+                    controller = vars(self.sampler).get('controller')
                     raw = getattr(controller, 'controller', None)
                     if raw is not None:
                         type(raw).stop(raw)
-                    self.sampler.close()
+                    if controller is not None:
+                        self.sampler.close()
             finally:
                 self.sampler = self.task = None
                 if self._stack is not None:
