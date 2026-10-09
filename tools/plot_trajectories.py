@@ -12,7 +12,7 @@ from matplotlib.patches import Polygon
 
 BG, PANEL, EDGE = '#0b1325', '#142238', '#38516a'
 TEXT, MUTED, SUCCESS, FAILURE, EXECUTION = '#edf4ff', '#a0b3ca', '#70e1b8', '#ffad7b', '#75ceff'
-plt.rcParams.update({'font.family': 'DejaVu Sans', 'svg.fonttype': 'none',
+plt.rcParams.update({'font.family': 'DejaVu Sans', 'svg.fonttype': 'none', 'svg.hashsalt': 'safety-chores-rl',
                      'text.color': TEXT, 'axes.labelcolor': MUTED,
                      'xtick.color': MUTED, 'ytick.color': MUTED})
 
@@ -129,7 +129,10 @@ def main():
     fig.text(.035, .070, 'Robot base centre in world coordinates. Room outlines only; doors and furniture omitted.', color=MUTED, size=10)
     fig.text(.035, .035, 'Turning and arm motion may leave the base in place. Selected development example; task 0, seed 1909.', color=MUTED, size=10)
     for extension in ('svg', 'png'):
-        fig.savefig(args.out/f'first-success-trajectories.{extension}', facecolor=BG)
+        path = args.out/f'first-success-trajectories.{extension}'
+        fig.savefig(path, facecolor=BG, metadata={'Date': None} if extension == 'svg' else None)
+        if extension == 'svg':
+            path.write_text('\n'.join(line.rstrip() for line in path.read_text(encoding='utf-8').splitlines())+'\n', encoding='utf-8')
     plt.close(fig)
     print(json.dumps(dict(paths=len(data['branches']), actions=sum(len(b['actions']) for b in data['branches']),
                           base_travel_metres=[round(path_length(b), 3) for b in data['branches']])))

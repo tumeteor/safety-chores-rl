@@ -7,7 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageColor, ImageDraw, ImageFont
 
 
 def font(size, bold=False):
@@ -97,6 +97,12 @@ def main():
     for i, frame in enumerate(images):
         strip.paste(frame.resize((thumbnail_width, 139)), (thumbnail_width*i, 0))
     palette = strip.quantize(colors=192)
+    # Reserve chart/label colors; thin paths would otherwise lose their colors
+    # when the much larger camera panels dominate adaptive palette allocation.
+    fixed = [component for color in [*colors.values(), '#ffad7b', '#df9970']
+             for component in ImageColor.getrgb(color)]
+    entries = palette.getpalette()[:192*3] + fixed
+    palette.putpalette(entries + [0]*(768-len(entries)))
     frames = [frame.quantize(palette=palette, dither=Image.Dither.NONE) for frame in images]
     durations = [120 if i % 2 == 0 else 130 for i in range(len(frames))]
     durations[-1] = 2000
