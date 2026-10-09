@@ -72,7 +72,7 @@ class BestOfN:
                     evaluations, ledger.report())
 
     @staticmethod
-    def _candidates(root, candidates, budget, admissible):
+    def _candidates(root, candidates, budget, admissible, *, preserve_order=False):
         unique = {}
         for index, candidate in enumerate(candidates):
             if index >= budget.max_candidates:
@@ -84,7 +84,7 @@ class BestOfN:
                 integer(action, "action")
             if admissible is None or admissible(root.observation, candidate):
                 unique.setdefault(candidate, None)
-        return tuple(sorted(unique))
+        return tuple(unique) if preserve_order else tuple(sorted(unique))
 
     @staticmethod
     def _seeds(seeds):
@@ -96,6 +96,45 @@ class BestOfN:
             if seed >= 2**32:
                 raise ValueError("sample_seed must fit UInt32")
         return seeds
+
+
+class FirstSuccess(BestOfN):
+    """Stop after the first bounded worker wave containing a zero-cost success.
+
+    Candidate order is caller priority. Retain the complete successful action
+    sequence and per-step execution signatures; no optimality/risk claim is made.
+    """
+    def plan(self, root, candidates, *, sample_seeds=(0, 1, 2, 3),
+             rollout_budget, search_budget=SearchBudget(), admissible=None):
+        candidates = self._candidates(root, candidates, search_budget, admissible, preserve_order=True)
+        seeds = self._seeds(sample_seeds)
+        ledger = BudgetLedger(search_budget)
+        groups = {c: [] for c in candidates}
+        witness = None
+        status = 'no_successful_trajectory' if candidates else 'no_admissible_plan'
+        budget = replace(rollout_budget, record_trace=True, stop_on_cost=True)
+        for seed in seeds:
+            for offset in range(0, len(candidates), self.session.workers):
+                wave = candidates[offset:offset+self.session.workers]
+                results = self.session.rollout_batch(root, wave, sample_seeds=[seed],
+                    budget=budget, ledger=ledger)
+                for result in results:
+                    groups[result.candidate].append(result)
+                if any(not r.valid for r in results):
+                    status = ('cancelled' if any(r.status == 'cancelled' for r in results) else
+                              'budget_exhausted' if ledger.exhausted else 'invalid_evidence')
+                    break
+                witness = next((r for r in results if r.success is True and r.safe_success is True
+                                and r.total_cost == 0 and len(r.trace) == len(r.actions)+1), None)
+                if witness:
+                    status = 'ok'
+                    break
+            if witness or status in ('cancelled', 'budget_exhausted', 'invalid_evidence'):
+                break
+        evaluations = tuple(_evaluation(c, groups[c], safe_completion, None) for c in candidates)
+        return Plan(root.identity, witness.actions if witness else None, status, evaluations,
+                    dict(ledger.report(), exhaustive_rollouts=len(candidates)*len(seeds)),
+                    'first_success', witness)
 
 
 class SuccessiveHalving(BestOfN):

@@ -91,6 +91,34 @@ only after a root check; on no plan it returns `(plan, None)` unless a fallback
 callback was explicitly supplied. Callers wanting to stop on cancellation or
 budget exhaustion should inspect a plan before calling `execute_first`.
 
+## First-success and checked execution
+
+`FirstSuccess` preserves caller candidate priority, visits distinct sample seeds
+in order, and dispatches at most `session.workers` candidates per wave. It forces
+`stop_on_cost=True` and `record_trace=True`. The first valid, completed zero-cost
+success in a fully valid wave becomes `plan.witness`; `plan.candidate` contains
+its entire action sequence. Every evaluated failure remains in `evaluations`.
+Invalid evidence, cancellation, or budget exhaustion ends the search without
+an executable witness. No successful sample also produces no proposed action.
+This is a feasibility search; its stopping rule does not estimate success rate.
+
+Call `session.execute_trajectory(episode, plan)` to execute the saved sequence.
+It verifies the live root and checks the runtime signature before and after each
+action, plus exact reward/cost and episode completion. It releases the root and
+its cache on execution completion or failure. `TrajectoryMismatch` stops further
+actions; it cannot undo the action that revealed divergence. The optional
+`on_step(episode, transition, index, matched)` observer is followed by another
+state check. Observers should only record evidence.
+
+Tracing requires `execution_signature()`, a side-effect-free JSON-serializable
+runtime extension. `RolloutResult.trace` contains one root hash followed by one
+hash per returned action. Native signatures contain the full snapshot except
+the policy sampling RNG intentionally forked for continuation proposals. Cameras,
+exposed physics, cost state, policy history/decoder/memory, and source identity
+still have to match. Initial root validation includes the RNG. Forced execution
+still runs policy inference and actual-action feedback at every step. This is
+agreement on declared fields, not a hidden-engine-state or future-safety proof.
+
 ## Runtime extension contract
 
 Implement the `Runtime` protocol:

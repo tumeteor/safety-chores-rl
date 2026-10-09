@@ -52,6 +52,11 @@ class GridRuntime:
         return dict(position=self.pos, goal=self.goal, steps=self.steps,
                     size=self.size, obstacles=sorted(self.obstacles))
 
+    def execution_signature(self):
+        state = self.snapshot()
+        state.pop('rng')
+        return state
+
     def end_episode(self):
         pass
 

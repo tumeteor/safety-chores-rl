@@ -203,6 +203,15 @@ class SafetyChoresRuntime:
                 'raw_navigation_camera', 'raw_manipulation_camera')}
         return result
 
+    def execution_signature(self):
+        # Full root validation still checks policy RNG. Along a forced action
+        # path, only the independently forked proposal RNG is excluded; images,
+        # exposed physics, cost bookkeeping, and deterministic memory must match.
+        state = self.snapshot()
+        state['policy'] = dict(state['policy'])
+        state['policy'].pop('rng', None)
+        return state
+
     def end_episode(self):
         try:
             if self.policy is not None:

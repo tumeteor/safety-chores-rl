@@ -10,11 +10,16 @@ import uuid
 
 from .runtime import Episode
 from .types import (API_VERSION, Root, RuntimeSpec, RolloutRequest, RolloutResult,
-                    RolloutBudget, SearchBudget, canonical, integer)
+                    RolloutBudget, SearchBudget, canonical, integer, digest)
 from .workers import WorkerPool
 
 
 class StalePlanError(ValueError):
+    pass
+
+
+class TrajectoryMismatch(RuntimeError):
+    """Execution stopped after an observed divergence; past actions cannot be undone."""
     pass
 
 
@@ -218,6 +223,48 @@ class RolloutSession:
 
     def cancel(self):
         self._cancel.set()
+
+    def execute_trajectory(self, episode, plan, *, on_step=None):
+        """Execute a zero-cost successful witness, checking every state/transition.
+
+        A mismatch raises before any further action. This verifies observed
+        agreement, not a guarantee that an unexpected event cannot cause harm.
+        """
+        with self._operation():
+            root = self._roots.get(plan.root_id)
+            witness = plan.witness
+            if root is None or not episode.matches(root):
+                raise StalePlanError('Live episode changed since this trajectory was sampled')
+            if (plan.status != 'ok' or witness is None or not witness.valid
+                    or witness.root_id != root.identity or witness.success is not True
+                    or witness.safe_success is not True or witness.total_cost != 0
+                    or not witness.actions or tuple(plan.candidate or ()) != witness.actions
+                    or len(witness.trace) != len(witness.actions)+1
+                    or len(witness.costs) != len(witness.actions)
+                    or len(witness.rewards) != len(witness.actions)):
+                raise ValueError('A complete traced zero-cost successful witness is required')
+            transitions = []
+            try:
+                for index, action in enumerate(witness.actions):
+                    if digest(episode.runtime.execution_signature()) != witness.trace[index]:
+                        raise TrajectoryMismatch(f'Execution state differs before action {index}')
+                    step = episode.step(action)
+                    transitions.append(step)
+                    matches = (digest(episode.runtime.execution_signature()) == witness.trace[index+1]
+                               and step.cost == witness.costs[index] and step.reward == witness.rewards[index]
+                               and episode.done == (index == len(witness.actions)-1))
+                    if on_step is not None:
+                        on_step(episode, step, index, matches)
+                    # Recheck after the observer callback before any further move.
+                    if (not matches or digest(episode.runtime.execution_signature()) != witness.trace[index+1]
+                            or episode.cost != root.cost + sum(witness.costs[:index+1])):
+                        raise TrajectoryMismatch(f'Execution diverged after action {index}')
+                if not transitions[-1].terminated or transitions[-1].success is not True or episode.cost != 0:
+                    raise TrajectoryMismatch('Execution did not confirm zero-cost task success')
+                return tuple(transitions)
+            finally:
+                self._roots.pop(root.identity, None)
+                self._cache = OrderedDict((k, v) for k, v in self._cache.items() if v.root_id != root.identity)
 
     def close(self):
         self.cancel()

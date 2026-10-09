@@ -5,9 +5,27 @@ The current source tree is an independent benchmark/API draft.
 
 Assessment updated on 2026-10-09: continue release engineering. Bounded native
 reset-and-replay search is working on the existing installation. A usable public
-simulator release still needs task-success and independent-installation evidence.
+simulator release still needs broader task coverage and independent-installation
+evidence. The README now includes one measured native task-success example.
 
-Verified on 2026-10-09:
+Latest verification on 2026-10-09:
+
+- First-success search used 2 of 8 allowed continuations on selected task 0,
+  seed 1909, cap 200. The first continuation failed after 85 actions; the second
+  completed the task in 75 actions with zero cost. Execution of that saved path
+  matched every per-step state/transition check and confirmed zero-cost success.
+  Search took 180.3 seconds; total time including preview/startup/cleanup was
+  339.8 seconds on a shared H100. This development example was selected using
+  earlier experiments, so it does not estimate held-out efficacy.
+- The [public receipt](assets/first-success.json) includes both outcomes and
+  exact source hashes. The README animation uses the original live sensor frames.
+- The expanded suite passed 45 tests on Linux and 41 on Windows, with two
+  Windows skips for Linux process cleanup and the optional Torch test module.
+- Checked trajectory execution excludes only the deliberately forked policy
+  sampling RNG from per-step comparisons. Full root validation still checks it.
+  No camera/physics integrity checks were relaxed.
+
+Earlier bounded probe on 2026-10-09:
 
 - Portable Windows Python 3.10 tests: 34 passed, one Linux-only test skipped.
   Linux tests: 35 passed, including owned-process timeout cleanup.
@@ -45,9 +63,9 @@ Earlier verification on 2026-10-06:
 
 Still required before a usable simulator release:
 
-- A reproducible native task-success example using an independently distributable
-  continuation policy or explicitly labeled oracle. Add deeper execution roots,
-  full successful action replays, multiple tasks/seeds, and independent samples.
+- Reproduce the demonstrated successful trajectory on a clean installation with
+  an independently distributable policy. Add deeper planning roots, multiple
+  tasks/seeds, independent samples, and held-out evaluation.
 - Resolve the observed intermittent manipulation-camera integrity fault, or
   explicitly bound the affected configuration with a validated rejection/recovery
   policy. The added failure capture is diagnostic instrumentation, not a fix.
@@ -63,11 +81,11 @@ development draft, not a ready public benchmark release.
 
 Full-horizon candidate evaluation is supported; arbitrary exhaustive action-tree
 search and fast hidden-state checkpoint restoration are not established. Budgeted
-sampling, successive halving, and exact-request reuse are the current practical
-search primitives. See [the native probe](native.md) for reproduction and result
+sampling, first-success stopping, successive halving, and exact-request reuse
+are the current practical search primitives. See [native validation](native.md) for reproduction and result
 semantics.
 
-## Pending learned-policy study — 2026-10-09
+## Separate learned-policy study protocol — 2026-10-09
 
 An optional external SafeVLA policy adapter now passes action-feedback, RNG
 isolation, and decoder-state regression tests. The existing checkpoint loaded
@@ -81,5 +99,6 @@ installation. Main tasks are fixed benchmark rows 0, 1, 2, 3 with seed 1909,
 continuation seeds per candidate. Canary task 0 uses separate seeds and a
 smaller budget. The study retains task failures and unsafe outcomes and stops
 on invalid evidence. It has a six-hour wall cap and at most two rollout workers.
-Full action replays check each baseline and search episode. No release gate is
-closed until the native receipts are audited.
+Full action replays check each baseline and search episode. This study is
+separate from the selected first-success demonstration; its aggregate results
+are not claimed in the README.

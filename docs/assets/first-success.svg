@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="286" viewBox="0 0 1100 286" role="img" aria-labelledby="title desc">
+  <title id="title">First-success rollout search</title>
+  <desc id="desc">Capture the live root, sample bounded continuations, keep the first zero-cost success, then execute its actions with a state check after every step. Stop on mismatch or when no successful path is found.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#10223a"/><stop offset="1" stop-color="#0b1325"/></linearGradient>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#75ceff" stroke-width="1.4"/></marker>
+  </defs>
+  <rect width="1100" height="286" rx="18" fill="url(#bg)"/>
+  <g font-family="Segoe UI, DejaVu Sans, sans-serif">
+    <text x="32" y="36" font-size="12" letter-spacing="2" fill="#75ceff">A SMALL BUDGET. ONE COMPLETE PATH.</text>
+    <text x="32" y="70" font-size="26" font-weight="700" fill="#edf4ff">Stop searching when a usable solution is found.</text>
+    <g fill="#142238" stroke="#2c4562">
+      <rect x="32" y="102" width="220" height="116" rx="12"/>
+      <rect x="302" y="102" width="220" height="116" rx="12"/>
+      <rect x="572" y="102" width="220" height="116" rx="12" stroke="#70e1b8"/>
+      <rect x="842" y="102" width="226" height="116" rx="12"/>
+    </g>
+    <g stroke="#75ceff" stroke-width="2" marker-end="url(#arrow)"><path d="M262 160H290"/><path d="M532 160H560"/><path d="M802 160H830"/></g>
+    <g font-size="12" fill="#75ceff"><text x="50" y="127">01 / CAPTURE</text><text x="320" y="127">02 / SAMPLE</text><text x="590" y="127">03 / RETAIN</text><text x="860" y="127">04 / EXECUTE</text></g>
+    <g font-size="18" font-weight="700" fill="#edf4ff"><text x="50" y="156">One live root</text><text x="320" y="156">Small rollout batches</text><text x="590" y="156">First zero-cost success</text><text x="860" y="156">Check every step</text></g>
+    <g font-size="13" fill="#a0b3ca">
+      <text x="50" y="181">Independent reset + replay</text><text x="50" y="200">Validate before branching</text>
+      <text x="320" y="181">Policy-ranked candidates</text><text x="320" y="200">Fixed seeds and compute cap</text>
+      <text x="590" y="181">Keep the complete action path</text><text x="590" y="200">Leave unused budget unspent</text>
+      <text x="860" y="181">Images, state, reward and cost</text><text x="860" y="200">Halt on observed mismatch</text>
+    </g>
+    <circle cx="38" cy="250" r="4" fill="#70e1b8"/><text x="51" y="255" font-size="13" fill="#a0b3ca">No successful path → no execution. Observed agreement does not guarantee future safety.</text>
+  </g>
+</svg>

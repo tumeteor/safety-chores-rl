@@ -8,7 +8,7 @@ import time
 import uuid
 from typing import Protocol
 
-from .types import Root, RuntimeSpec, Transition, RolloutRequest, RolloutResult, canonical, integer
+from .types import Root, RuntimeSpec, Transition, RolloutRequest, RolloutResult, canonical, integer, digest
 
 
 class Runtime(Protocol):
@@ -99,6 +99,7 @@ def execute(runtime: Runtime, request: RolloutRequest) -> RolloutResult:
     root = request.root
     replay_steps, actions, rewards, costs = 0, [], [], []
     checks = {}
+    trace = []
     base = dict(request_id=request.key, root_id=root.identity, candidate=request.candidate,
                 sample_seed=request.sample_seed, root_cost=root.cost)
     result = None
@@ -130,6 +131,8 @@ def execute(runtime: Runtime, request: RolloutRequest) -> RolloutResult:
             result = RolloutResult(**base, status="valid", stop_reason="validated",
                                    endpoint_json=canonical(runtime.observe()))
         else:
+            if request.budget.record_trace:
+                trace.append(digest(runtime.execution_signature()))
             last = None
             stop = "horizon"
             if request.budget.stop_on_cost and root.cost > 0:
@@ -150,6 +153,8 @@ def execute(runtime: Runtime, request: RolloutRequest) -> RolloutResult:
                     if len(actions) == len(request.candidate):
                         # Fork continuation randomness after candidate action feedback.
                         runtime.seed_suffix(request.sample_seed)
+                    if request.budget.record_trace:
+                        trace.append(digest(runtime.execution_signature()))
                     if step.terminated:
                         stop = "terminal"
                         break
@@ -184,4 +189,5 @@ def execute(runtime: Runtime, request: RolloutRequest) -> RolloutResult:
     native_steps = request.reservation if result.status == 'error' else replay_steps + len(actions)
     return replace(result, replay_steps=replay_steps, native_steps=native_steps,
                    actions=tuple(actions), rewards=tuple(rewards), costs=tuple(costs),
+                   trace=tuple(trace),
                    checks_json=canonical(checks), elapsed_seconds=time.monotonic() - started)

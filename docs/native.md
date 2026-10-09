@@ -105,7 +105,35 @@ integration does not require task success: failures and unsafe outcomes must
 remain visible. The program saves partial evidence on failure and needs an
 outer timeout for unattended operation.
 
-The first learned-policy study was launched on 2026-10-09. Its outcomes remain
-pending; loading weights and passing adapter tests do not establish successful
-native search. Checkpoint redistribution and a clean upstream installation
-remain separate release gates.
+## First-success demonstration
+
+The [README example](../README.md#a-practical-native-example) uses
+`examples/native_first_success.py`. On the selected task 0 / seed 1909 case,
+two continuations were evaluated: candidate action 2 failed after 85 actions;
+candidate action 1 succeeded after 75, both with suffix seed 4100. The saved
+75-action success then executed with zero cost and all per-step checks matching.
+These outcomes are from an existing installation, not an independent clean build
+or held-out evaluation. The earlier paired study is a separate experiment.
+
+Use the README command after creating the native and policy configurations
+above. The default budget is two candidates, four suffix seeds, one worker,
+200 actions per branch, 420 seconds per worker request, and 1,800 seconds of
+search time. Candidate preview and live startup/execution are additional work.
+Use an outer process timeout for unattended runs. There is no action fallback
+when a successful trajectory is absent; the example exits with status 2.
+
+`--save-frames` needs Pillow and writes the existing navigation/manipulation
+observations at the root and after each executed action. It never re-renders
+for the visualization. Regenerate the animation from a completed report with:
+
+```sh
+python -m pip install pillow
+python tools/render_first_success.py \
+  --report runs/first-success/report.json --frames runs/first-success/frames \
+  --out runs/first-success/visuals
+```
+
+The renderer preserves the camera images and adds labels and a progress strip.
+Playback is eight actions per second, with a final hold; this is not wall time.
+Checkpoint redistribution and a clean upstream installation remain separate
+release gates.

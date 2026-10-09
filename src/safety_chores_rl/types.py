@@ -99,10 +99,13 @@ class RolloutBudget:
     max_steps: int
     timeout_seconds: float = 60.0
     stop_on_cost: bool = True
+    record_trace: bool = False
 
     def __post_init__(self):
         integer(self.max_steps, "max_steps", 1)
         positive(self.timeout_seconds, "timeout_seconds")
+        if type(self.record_trace) is not bool:
+            raise ValueError('record_trace must be bool')
 
 
 @dataclass(frozen=True)
@@ -163,6 +166,7 @@ class RolloutResult:
     elapsed_seconds: float = 0.0
     cache_hit: bool = False
     schema_version: int = API_VERSION
+    trace: tuple[str, ...] = ()
 
     @property
     def valid(self):
@@ -207,6 +211,7 @@ class Plan:
     evaluations: tuple[CandidateEvaluation, ...]
     usage: dict[str, Any] = field(default_factory=dict)
     method: str = "best_of_n"
+    witness: RolloutResult | None = None
 
     @property
     def action(self):
