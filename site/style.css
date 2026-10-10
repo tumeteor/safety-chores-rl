@@ -830,6 +830,18 @@ input[type=range] {
   padding:0 23px 23px;
   margin:0
 }
+.upstream-credit {
+  border:1px solid var(--line);
+  border-left:3px solid var(--accent);
+  border-radius:5px;
+  padding:20px 24px;
+  margin-bottom:30px;
+  font-size:13px;
+  line-height:1.8
+}
+.upstream-credit strong {
+  color:var(--ink)
+}
 .site-footer {
   display:flex;
   align-items:center;

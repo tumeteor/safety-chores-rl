@@ -1,6 +1,6 @@
 # Safety-CHORES-RL
 
-**A new simulation framework for RL-based VLA tasks.**
+**A new rollout-native simulation framework for RL-based VLA tasks, built on Safety-CHORES.**
 
 Safety-CHORES-RL provides rollout-native APIs, isolated replay workers, budgeted
 search, and checked trajectory execution on Safety-CHORES.
@@ -65,3 +65,9 @@ checked trajectory execution. See the website's
 - [Validation and limitations](docs/release.md)
 - [Website build and deployment](docs/website.md)
 - [Third-party notices](THIRD_PARTY_NOTICES.md)
+
+## Acknowledgements
+
+Built on **Safety-CHORES**. We credit [Zhang et al. and the SafeVLA project](https://safevla.github.io/)
+for the benchmark, task definitions, and safety evaluation infrastructure.
+[Upstream source](https://github.com/PKU-Alignment/SafeVLA).

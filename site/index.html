@@ -26,7 +26,7 @@
       <div class="eyebrow"><span class="status-dot"></span> SIMULATION FRAMEWORK <span class="eyebrow-divider">/</span> RL-BASED VLA TASKS</div>
       <div class="hero-grid">
         <div><h1 id="hero-title">Simulate a path.<br><em>Check every step.</em></h1>
-          <p class="hero-description"><strong>A new simulation framework for RL-based VLA tasks.</strong> Explore native continuations, reconstruct decision states with reset and replay, and check selected trajectories during execution.</p>
+          <p class="hero-description"><strong>A new rollout-native simulation framework for RL-based VLA tasks, built on Safety-CHORES.</strong> Explore native continuations, reconstruct decision states with reset and replay, and check selected trajectories during execution.</p>
           <div class="hero-actions"><a class="button primary" href="#demo" id="watch-demo">Watch the native run <span aria-hidden="true">↘</span></a><a class="text-link" href="#explorer">Explore the trajectories <span aria-hidden="true">→</span></a></div>
         </div>
         <aside class="hero-result" aria-label="Selected native demonstration results"><span class="eyebrow">ONE SELECTED NATIVE RUN</span><div><strong>2<span>/8</span></strong><span>allowed rollouts used</span></div><div><strong>75</strong><span>executed actions checked</span></div><div><strong>0</strong><span>recorded cost</span></div><p>Task 0 · seed 1909<br>One H100 · one rollout worker</p></aside>
@@ -135,6 +135,7 @@ python -m pip install -e ".[test]"
 python -m pytest -q
 python examples/fast_search.py --workers 2</code></pre><p>Native workflow: reconstruct → search → retain witness → checked execution.</p><span id="copy-status" class="sr-only" aria-live="polite"></span></div></section>
   </main>
+  <aside class="wrap upstream-credit" aria-label="Upstream acknowledgement"><p><strong>Built on Safety-CHORES.</strong> We credit <a href="https://safevla.github.io/">Zhang et al. and the SafeVLA project</a> for the benchmark, task definitions, and safety evaluation infrastructure. <a href="https://github.com/PKU-Alignment/SafeVLA">Upstream source ↗</a></p></aside>
   <footer class="wrap site-footer"><a class="brand" href="./"><img src="favicon.svg" width="25" height="25" alt=""><span>Safety-CHORES / RL</span></a><a href="#paper">Paper · Nguyen et al.</a><a href="guides/third-party.html">Third-party notices</a><a href="https://github.com/tumeteor/safety-chores-rl">GitHub ↗</a></footer>
 </body>
 </html>
