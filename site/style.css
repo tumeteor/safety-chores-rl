@@ -327,6 +327,69 @@ a.button {
 .benchmark-table tr:last-child>* {
   border-bottom:0
 }
+.rl-section {
+  margin-top:45px;
+  padding-top:30px;
+  border-top:1px solid var(--line)
+}
+.rl-grid,.episode-stats {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:30px;
+  margin-top:25px
+}
+.rl-grid article {
+  border-left:2px solid #b7cbbb;
+  padding-left:20px
+}
+.rl-grid h4 {
+  margin:12px 0;
+  font-size:17px;
+  font-weight:550
+}
+.rl-grid p,.episode-stats p {
+  font-size:13px;
+  line-height:1.8
+}
+.episode-stats {
+  margin:0 0 25px
+}
+.episode-stats>div {
+  padding:24px;
+  background:#edf2e9;
+  border:1px solid var(--line);
+  border-radius:5px
+}
+.episode-stats strong,.episode-stats span {
+  display:block
+}
+.episode-stats strong {
+  color:var(--green);
+  font-size:38px;
+  line-height:1.3;
+  font-weight:450;
+  letter-spacing:-.04em
+}
+.episode-stats span {
+  margin:8px 0;
+  font-size:13px;
+  font-weight:550
+}
+.episode-details {
+  margin-bottom:35px
+}
+.episode-table {
+  min-width:680px
+}
+.episode-table th:first-child {
+  width:30%
+}
+@media(max-width:720px) {
+  .rl-grid,.episode-stats {
+    grid-template-columns:1fr;
+    gap:18px
+  }
+}
 .main-demo {
   margin-top:45px;
   background:#0b1325;

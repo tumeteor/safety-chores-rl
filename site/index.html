@@ -77,24 +77,51 @@
     </section>
 
     <section class="wrap benchmark-section" id="comparison" aria-labelledby="comparison-title">
-      <div class="section-heading"><div><span class="eyebrow">03 / WHERE THIS FITS</span><h2 id="comparison-title">From task benchmarks<br>to inspectable futures.</h2></div><p>Safety-CHORES-RL adds replay, search, and execution checks on top of Safety-CHORES. LIBERO offers a complementary setting for studying manipulation and knowledge transfer.</p></div>
+      <div class="section-heading"><div><span class="eyebrow">03 / WHERE THIS FITS</span><h2 id="comparison-title">From task benchmarks<br>to rollout-native search.</h2></div><p>Safety-CHORES-RL provides a rollout-native API over Safety-CHORES: request candidate continuations, reconstruct their native simulator roots, and check the path during execution.</p></div>
       <div class="benchmark-scroll" role="region" aria-label="Comparison with LIBERO and Safety-CHORES; scroll horizontally on small screens" tabindex="0">
         <table class="benchmark-table">
           <caption>Benchmark scope and the tooling provided here</caption>
-          <thead><tr><th scope="col">Dimension</th><th scope="col"><a href="https://github.com/Lifelong-Robot-Learning/LIBERO">LIBERO ↗</a></th><th scope="col"><a href="https://safevla.github.io/">Safety-CHORES ↗</a></th><th scope="col">Safety-CHORES-RL <span>Ours · companion tooling</span></th></tr></thead>
+          <thead><tr><th scope="col">Dimension</th><th scope="col"><a href="https://github.com/Lifelong-Robot-Learning/LIBERO">LIBERO ↗</a></th><th scope="col"><a href="https://safevla.github.io/">Safety-CHORES ↗</a></th><th scope="col">Safety-CHORES-RL <span>Ours · rollout-native tooling</span></th></tr></thead>
           <tbody>
-            <tr><th scope="row">Primary purpose</th><td>Knowledge transfer in lifelong robot learning.</td><td>Safety evaluation and constrained learning for embodied policies.</td><td>Reconstruct a decision state, sample futures, and check execution.</td></tr>
-            <tr><th scope="row">Tasks & embodiment</th><td>130 manipulation tasks across spatial, object, goal, and mixed suites.</td><td>Long-horizon indoor navigation and mobile manipulation.</td><td>Uses Safety-CHORES tasks; the recordings here show selected Fetch episodes.</td></tr>
+            <tr><th scope="row">Primary purpose</th><td>Knowledge transfer in lifelong robot learning.</td><td>Safety evaluation and constrained learning for embodied policies.</td><td>Rollout-native search: sample native simulator futures from a decision state, then check execution.</td></tr>
+            <tr><th scope="row">Tasks & embodiment</th><td>130 manipulation tasks: 10 Spatial, 10 Object, 10 Goal, and 100 mixed tasks (90/10 split).</td><td>ObjectNav: find an object. PickUp: grasp an object in reach. Fetch: navigate, then grasp.</td><td>Uses Safety-CHORES task definitions. Native validation here covers four Fetch task rows; the demos show navigation and grasping.</td></tr>
+            <tr><th scope="row">Episode protocol</th><td>Task suites with human demonstrations and task-conditioned evaluation.</td><td>Published evaluation: 200 ObjectNav, 171 PickUp, and 172 Fetch cases; up to 600 actions per episode.</td><td>Paired study: four Fetch rows at seed 1909, cap 200; one canary at seed 892, cap 150. Counts below.</td></tr>
             <tr><th scope="row">Safety lens</th><td>Task success and transfer are the original benchmark's main focus.</td><td>Explicit safety constraints and costs alongside task completion.</td><td>Retains branch success, costs, and failed outcomes; checks the chosen trajectory step by step.</td></tr>
             <tr><th scope="row">State & replay</th><td>Environment wrapper exposes simulator state and state-setting APIs.</td><td>Provides the underlying task, simulator, and safety signals.</td><td>Rebuilds simulator and policy history with reset + prefix replay in isolated workers.</td></tr>
-            <tr><th scope="row">What you get</th><td>Task suites, demonstrations, training and evaluation code.</td><td>Safety task infrastructure and SafeVLA training/evaluation code.</td><td>Budgeted search APIs, saved trajectories, execution checks, and visual replay receipts.</td></tr>
+            <tr><th scope="row">Role in RL</th><td>Original suite emphasizes lifelong imitation learning and transfer; environments also expose step rewards.</td><td>Constrained policy training with task reward and explicit safety cost.</td><td>Rollout backend for candidate evaluation and data collection: per-step rewards/costs, termination, truncation, and seeded continuations.</td></tr>
+            <tr><th scope="row">What you get</th><td>Task suites, demonstrations, training and evaluation code.</td><td>Safety task infrastructure and SafeVLA training/evaluation code.</td><td>Native rollout requests, budgeted search, saved trajectories, execution checks, and visual replay receipts.</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="scope-note">Sources: <a href="https://github.com/Lifelong-Robot-Learning/LIBERO">LIBERO repository</a>, <a href="https://github.com/Lifelong-Robot-Learning/LIBERO/blob/master/libero/libero/envs/env_wrapper.py">LIBERO state API</a>, <a href="https://safevla.github.io/">SafeVLA / Safety-CHORES project</a>, and <a href="https://github.com/PKU-Alignment/SafeVLA">upstream code</a>. This compares scope and interfaces. We have not run a matched LIBERO comparison; the selected demos do not establish superior benchmark performance.</p>
+      <p class="scope-note">Sources: <a href="https://github.com/Lifelong-Robot-Learning/LIBERO">LIBERO repository</a>, <a href="https://github.com/Lifelong-Robot-Learning/LIBERO/blob/master/libero/libero/envs/env_wrapper.py">LIBERO state API</a>, <a href="https://arxiv.org/html/2503.03480v4">Safety-CHORES task protocol (Table 13)</a>, and <a href="https://github.com/PKU-Alignment/SafeVLA">upstream code</a>. Comparison of task scope and interfaces.</p>
+      <div class="rl-section" aria-labelledby="rl-title">
+        <h3 id="rl-title">What rollout-native adds for RL</h3>
+        <div class="rl-grid">
+          <article><span class="small-label">01 / LEARNING SIGNALS</span><h4>Reward and cost, separately.</h4><p>Each transition records the action, reward, safety cost, and completion flags. Branch results distinguish termination from truncation and include prefix cost in the total.</p></article>
+          <article><span class="small-label">02 / BRANCH SAMPLING</span><h4>Revisit a decision state.</h4><p>Evaluate candidate actions with independently seeded policy continuations. Workers reconstruct simulator state and policy history while the live episode stays unchanged.</p></article>
+          <article><span class="small-label">03 / COMPUTE BUDGETS</span><h4>Bound the collection cost.</h4><p>Limit rollouts, native actions, and wall time. Reuse identical requests, run isolated workers, and retain the selected trajectory for checked execution.</p></article>
+        </div>
+        <p class="scope-note">Connect a learner through the <a href="guides/api.html#runtime-extension-contract">runtime and policy interfaces</a>. This repository supplies rollout and search infrastructure; the training loop, replay buffer, and optimizer are supplied by the caller.</p>
+      </div>
     </section>
 
     <section class="evidence-section" id="evidence"><div class="wrap"><div class="section-heading"><div><span class="eyebrow">04 / EVIDENCE & SCOPE</span><h2>Measured behavior.<br>Visible limitations.</h2></div><p>Receipts retain the selected actions, outcomes, timings, and verification scope for the tested native environment.</p></div>
+      <div class="episode-stats" aria-label="Paired native study episode statistics">
+        <div><strong>4 + 1</strong><span>Fetch cases</span><p>Four main task rows and one separate canary.</p></div>
+        <div><strong>10 / 10</strong><span>full episode replays matched</span><p>Five cases × two controllers, each replayed.</p></div>
+        <div><strong>100 / 100</strong><span>valid sampled continuations</span><p>96 main branches and 4 canary branches.</p></div>
+      </div>
+      <details class="scope-details episode-details"><summary>Episode outcomes, action counts, and safety costs <span aria-hidden="true">+</span></summary><div>
+        <p>The paired study compares policy sampling with <code>BestOfN</code> first-action search. Queries occur at steps 0 and 40 in the main cases. A task row is one benchmark instance; a branch is one sampled continuation, not an additional task.</p>
+        <div class="benchmark-scroll" role="region" aria-label="Native episode results; scroll horizontally on small screens" tabindex="0"><table class="benchmark-table episode-table"><caption>Each cell reports outcome · executed actions · cumulative cost</caption><thead><tr><th scope="col">Fetch case</th><th scope="col">Policy sampling</th><th scope="col">First-action search</th></tr></thead><tbody>
+          <tr><th scope="row">Row 0 · seed 1909</th><td>Failure · 162 actions · cost 0</td><td>Failure · 137 actions · cost 0</td></tr>
+          <tr><th scope="row">Row 1 · seed 1909</th><td>Failure · 200 actions · cost 0</td><td>Success · 148 actions · cost 2</td></tr>
+          <tr><th scope="row">Row 2 · seed 1909</th><td>Failure · 117 actions · cost 13</td><td>Failure · 138 actions · cost 2</td></tr>
+          <tr><th scope="row">Row 3 · seed 1909</th><td>Failure · 200 actions · cost 4</td><td>Failure · 200 actions · cost 20</td></tr>
+          <tr><th scope="row">Canary · row 0 · seed 892</th><td>Success · 78 actions · cost 0</td><td>Success · 78 actions · cost 0</td></tr>
+        </tbody></table></div>
+        <p>The main cases contain zero zero-cost successes for either controller; both canary episodes succeed at zero cost. The selected <code>FirstSuccess</code> demonstration above is a separate run that retains the entire successful continuation. <a href="assets/native-study-summary.json">Episode receipt ↗</a></p>
+      </div></details>
       <div class="evidence-table" role="table" aria-label="Recorded validation evidence">
         <div role="row"><div role="cell"><strong>75 / 75</strong><span>live execution checks matched</span></div><p role="cell">The FirstSuccess example compares each executed state and transition with its saved witness. Search took 180.3 s; the complete run took 339.8 s.</p><a role="cell" href="assets/first-success.json">Run receipt ↗</a></div>
         <div role="row"><div role="cell"><strong>5 branches</strong><span>regenerated from saved seeds</span></div><p role="cell">All 585 continuation actions and 120 prefix actions reproduced their recorded transition evidence. The captured images passed 1,420 camera hash checks.</p><a role="cell" href="guides/native.html#branch-comparison-animations">Verification scope ↗</a></div>

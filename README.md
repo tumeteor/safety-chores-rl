@@ -55,7 +55,7 @@ dependency-version conflicts. Native validation is scoped to that tested configu
 [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO) focuses on manipulation
 and knowledge transfer. [Safety-CHORES](https://safevla.github.io/) supplies
 safety-critical navigation and mobile manipulation tasks. Safety-CHORES-RL builds
-on Safety-CHORES with isolated reset-and-replay workers, budgeted search, and
+on Safety-CHORES with a **rollout-native API**, isolated reset-and-replay workers, budgeted search, and
 checked trajectory execution. See the website's
 [comparison of scope and interfaces](https://tumeteor.github.io/safety-chores-rl/#comparison).
 
