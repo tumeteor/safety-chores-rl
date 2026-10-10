@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Safety-CHORES-RL: native rollout and search tooling accompanying A Safe Action Is Not Enough: Feasible-Future Decoding for Vision-Language-Action Policies, by Tu Nguyen and colleagues.">
+  <meta name="description" content="Safety-CHORES-RL: rollout-native simulator APIs, budgeted search, and checked trajectory execution. Explore native recordings and interactive trajectories.">
   <meta name="theme-color" content="#f5f5f0">
   <meta property="og:title" content="Safety-CHORES-RL — Simulate a path. Check every step.">
   <meta property="og:description" content="Explore native rollouts, reconstructed search states, and trajectories with different outcomes.">
@@ -32,10 +32,9 @@
         <aside class="hero-result" aria-label="Selected native demonstration results"><span class="eyebrow">ONE SELECTED NATIVE RUN</span><div><strong>2<span>/8</span></strong><span>allowed rollouts used</span></div><div><strong>75</strong><span>executed actions checked</span></div><div><strong>0</strong><span>recorded cost</span></div><p>Task 0 · seed 1909<br>One H100 · one rollout worker</p></aside>
       </div>
       <aside class="paper-panel" id="paper" aria-labelledby="paper-title">
-        <span class="eyebrow">Feel free to cite our paper</span>
+        <span class="eyebrow">Please cite the paper when relevant</span>
         <h2 id="paper-title"><a href="https://arxiv.org/abs/2610.05166">A Safe Action Is Not Enough:<br>Feasible-Future Decoding for Vision-Language-Action Policies</a></h2>
         <p class="paper-authors">Nguyen et al.</p>
-        <p class="paper-context">This project provides native rollout and search tooling for studying feasible futures. The paper presents VICS-G, a decoder that requires no online rollouts, and studies rollout augmentation separately. The recordings below demonstrate this tooling.</p>
         <div class="paper-links"><a href="https://arxiv.org/abs/2610.05166">Read the paper ↗</a><a href="https://arxiv.org/pdf/2610.05166">PDF ↗</a><a href="citation.bib" download>Download BibTeX ↓</a></div>
       </aside>
       <figure class="main-demo" id="demo">
@@ -136,6 +135,6 @@ python -m pip install -e ".[test]"
 python -m pytest -q
 python examples/fast_search.py --workers 2</code></pre><p>Native workflow: reconstruct → search → retain witness → checked execution.</p><span id="copy-status" class="sr-only" aria-live="polite"></span></div></section>
   </main>
-  <footer class="wrap site-footer"><a class="brand" href="./"><img src="favicon.svg" width="25" height="25" alt=""><span>Safety-CHORES / RL</span></a><a href="#paper">Research software · Nguyen et al.</a><a href="guides/third-party.html">Third-party notices</a><a href="https://github.com/tumeteor/safety-chores-rl">GitHub ↗</a></footer>
+  <footer class="wrap site-footer"><a class="brand" href="./"><img src="favicon.svg" width="25" height="25" alt=""><span>Safety-CHORES / RL</span></a><a href="#paper">Paper · Nguyen et al.</a><a href="guides/third-party.html">Third-party notices</a><a href="https://github.com/tumeteor/safety-chores-rl">GitHub ↗</a></footer>
 </body>
 </html>

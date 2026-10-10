@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite our paper using the preferred citation below."
+message: "When relevant, please cite the paper using the preferred citation below."
 title: "Safety-CHORES-RL"
 type: software
 authors:

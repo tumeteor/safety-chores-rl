@@ -2,13 +2,9 @@
 
 Simulator tooling, isolated replay rollouts, and budgeted search for Safety-CHORES.
 
-Research software accompanying **[A Safe Action Is Not Enough: Feasible-Future
+When relevant, please cite **[A Safe Action Is Not Enough: Feasible-Future
 Decoding for Vision-Language-Action Policies](https://arxiv.org/abs/2610.05166)**,
 by **Nguyen et al.** [BibTeX](CITATION.bib).
-
-This repository provides native rollout and search tooling. The paper's VICS-G
-decoder requires no online rollouts; it studies rollout augmentation separately.
-The demonstrations here validate the tooling on selected native episodes.
 
 **[Explore the project website →](https://tumeteor.github.io/safety-chores-rl/)**
 

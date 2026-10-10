@@ -1,10 +1,9 @@
 # Validation and limitations
 
 Safety-CHORES-RL provides replay rollouts and budgeted search on a tested native
-Safety-CHORES installation. It accompanies
+Safety-CHORES installation. When relevant, please cite
 [A Safe Action Is Not Enough: Feasible-Future Decoding for Vision-Language-Action Policies](https://arxiv.org/abs/2610.05166)
-by Tu Nguyen and colleagues. The runs on this page validate this repository's
-tooling; they are separate from the paper's decoder evaluation.
+by Nguyen et al.
 
 ## Checked native execution
 
