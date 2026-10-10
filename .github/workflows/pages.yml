@@ -10,6 +10,7 @@ on:
       - 'tools/build_site.py'
       - 'tools/check_site.py'
       - 'THIRD_PARTY_NOTICES.md'
+      - 'CITATION.bib'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 

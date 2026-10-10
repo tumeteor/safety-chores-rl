@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "run_date": "2026-10-09",
-  "scope": "Selected development example on an existing installation; task and seed informed by earlier experiments. Not held-out benchmark evidence.",
+  "scope": "Selected native example on an existing installation; task and seed informed by earlier experiments. Not held-out benchmark evidence.",
   "hardware": "One shared NVIDIA H100 80 GB on Linux; one rollout worker",
   "method": "first_success",
   "task_id": 0,

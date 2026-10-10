@@ -40,9 +40,9 @@ def guide_document(name, text):
     return f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)} — Safety-CHORES-RL</title><link rel="icon" href="../favicon.svg"><link rel="stylesheet" href="../style.css"></head>
-<body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="../index.html"><img src="../favicon.svg" width="30" height="30" alt="">Safety-CHORES / RL</a><nav aria-label="Documentation"><a href="native.html">Native setup</a><a href="api.html">API</a><a href="release.html">Release status</a></nav></header>
+<body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="../index.html"><img src="../favicon.svg" width="30" height="30" alt="">Safety-CHORES / RL</a><nav aria-label="Documentation"><a href="native.html">Native setup</a><a href="api.html">API</a><a href="release.html">Validation</a></nav></header>
 <main id="main" class="wrap guide"><a class="guide-back" href="../index.html">← Project website</a>{content}</main>
-<footer class="wrap site-footer"><span>Safety-CHORES-RL · Development preview</span><a href="https://github.com/tumeteor/safety-chores-rl">Source on GitHub ↗</a></footer></body></html>'''
+<footer class="wrap site-footer"><a href="../index.html#paper">Research software · Nguyen et al. · A Safe Action Is Not Enough</a><a href="https://github.com/tumeteor/safety-chores-rl">Source on GitHub ↗</a></footer></body></html>'''
 
 
 def main():
@@ -82,6 +82,7 @@ def main():
     for source in sorted(ASSETS.iterdir()):
         if source.is_file() and source.suffix in {'.json', '.png', '.svg', '.gif', '.mp4'}:
             copy(source, 'assets/'+source.name)
+    copy(ROOT/'CITATION.bib', 'citation.bib')
     data = dict(prefix40=explorer_scene('branches-prefix40.json'), seed892=explorer_scene('branches-seed892.json'))
     write('assets/explorer.json', json.dumps(data, separators=(',', ':'), allow_nan=False)+'\n')
     for name in ('native', 'api', 'release'):

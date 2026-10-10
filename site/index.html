@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Native simulator rollouts, reset-and-replay workers, and checked trajectory execution for Safety-CHORES. Explore real robot camera views and recorded branches.">
+  <meta name="description" content="Safety-CHORES-RL: native rollout and search tooling accompanying A Safe Action Is Not Enough: Feasible-Future Decoding for Vision-Language-Action Policies, by Tu Nguyen and colleagues.">
   <meta name="theme-color" content="#f5f5f0">
   <meta property="og:title" content="Safety-CHORES-RL — Simulate a path. Check every step.">
   <meta property="og:description" content="Explore native rollouts, reconstructed search states, and trajectories with different outcomes.">
@@ -19,11 +19,11 @@
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <a class="brand" href="./" aria-label="Safety-CHORES-RL home"><img src="favicon.svg" width="30" height="30" alt=""><span>Safety-CHORES<span class="brand-suffix"> / RL</span></span></a>
-    <nav aria-label="Main navigation"><a href="#method">Method</a><a href="#explorer">Explore</a><a href="#evidence">Evidence</a><a href="guides/native.html">Documentation <span aria-hidden="true">↗</span></a></nav>
+    <nav aria-label="Main navigation"><a href="#method">Method</a><a href="#explorer">Explore</a><a href="#comparison">Compare</a><a href="#paper">Paper</a><a href="guides/native.html">Documentation <span aria-hidden="true">↗</span></a></nav>
   </header>
   <main id="main">
     <section class="hero wrap" aria-labelledby="hero-title">
-      <div class="eyebrow"><span class="status-dot"></span> A DEVELOPMENT PREVIEW <span class="eyebrow-divider">/</span> NATIVE EMBODIED TASKS</div>
+      <div class="eyebrow"><span class="status-dot"></span> FEASIBLE-FUTURE DECODING <span class="eyebrow-divider">/</span> NATIVE ROLLOUT TOOLING</div>
       <div class="hero-grid">
         <div><h1 id="hero-title">Simulate a path.<br><em>Check every step.</em></h1>
           <p class="hero-description">Explore complete continuations before acting. Reconstruct the current state with reset and replay, keep a successful path, and check it during execution.</p>
@@ -31,12 +31,19 @@
         </div>
         <aside class="hero-result" aria-label="Selected native demonstration results"><span class="eyebrow">ONE SELECTED NATIVE RUN</span><div><strong>2<span>/8</span></strong><span>allowed rollouts used</span></div><div><strong>75</strong><span>executed actions checked</span></div><div><strong>0</strong><span>recorded cost</span></div><p>Task 0 · seed 1909<br>One H100 · one rollout worker</p></aside>
       </div>
+      <aside class="paper-panel" id="paper" aria-labelledby="paper-title">
+        <span class="eyebrow">RESEARCH SOFTWARE ACCOMPANYING OUR PAPER</span>
+        <h2 id="paper-title"><a href="https://arxiv.org/abs/2610.05166">A Safe Action Is Not Enough:<br>Feasible-Future Decoding for Vision-Language-Action Policies</a></h2>
+        <p class="paper-authors">Tu Nguyen · Matthieu Zimmer · Vu Anh Vu · Ziyi Wang · Jannik Hammel Nielsen · Xuebing Zhou · Haitham Bou Ammar</p>
+        <p class="paper-context">This project provides native rollout and search tooling for studying feasible futures. The paper presents VICS-G, a decoder that requires no online rollouts, and studies rollout augmentation separately. The recordings below demonstrate this tooling.</p>
+        <div class="paper-links"><a href="https://arxiv.org/abs/2610.05166">Read the paper ↗</a><a href="https://arxiv.org/pdf/2610.05166">PDF ↗</a><a href="citation.bib" download>Download BibTeX ↓</a></div>
+      </aside>
       <figure class="main-demo" id="demo">
         <div class="media-topline"><span><span class="status-dot"></span> NATIVE EXECUTION</span><span>Basketball grasp · FirstSuccess</span></div>
         <video id="main-video" controls playsinline preload="none" poster="assets/first-success.png" aria-label="75-action native basketball grasp with navigation, manipulation, and trajectory views"><source src="assets/first-success.mp4" type="video/mp4"><a href="assets/first-success.gif">Open the animated GIF</a></video>
         <figcaption><span>Two camera views. One checked trajectory.</span><span>8 actions/s · accelerated playback <a href="assets/first-success.gif">GIF ↗</a></span></figcaption>
       </figure>
-      <p class="scope-note">A selected development example, not a benchmark success rate. The 75-action execution matched every saved state/transition check. <a href="assets/first-success.json">Inspect the run receipt ↗</a></p>
+      <p class="scope-note">Selected native example: the 75-action execution matched every saved state/transition check. This single run does not estimate a benchmark success rate. <a href="assets/first-success.json">Inspect the run receipt ↗</a></p>
     </section>
 
     <section class="method-section" id="method">
@@ -69,21 +76,39 @@
       <p class="scope-note">Selected branches from the earlier <code>BestOfN</code> study: 3 of 12 at the 40-action root, and 2 of 4 at the initial root. Captured sequentially, displayed by action count. These are separate from the FirstSuccess demonstration.</p>
     </section>
 
-    <section class="evidence-section" id="evidence"><div class="wrap"><div class="section-heading"><div><span class="eyebrow">03 / EVIDENCE & SCOPE</span><h2>Measured behavior.<br>Visible limitations.</h2></div><p>Receipts retain the selected actions, outcomes, timings, and verification scope. The current release is a development preview for a tested native environment.</p></div>
+    <section class="wrap benchmark-section" id="comparison" aria-labelledby="comparison-title">
+      <div class="section-heading"><div><span class="eyebrow">03 / WHERE THIS FITS</span><h2 id="comparison-title">From task benchmarks<br>to inspectable futures.</h2></div><p>Safety-CHORES-RL adds replay, search, and execution checks on top of Safety-CHORES. LIBERO offers a complementary setting for studying manipulation and knowledge transfer.</p></div>
+      <div class="benchmark-scroll" role="region" aria-label="Comparison with LIBERO and Safety-CHORES; scroll horizontally on small screens" tabindex="0">
+        <table class="benchmark-table">
+          <caption>Benchmark scope and the tooling provided here</caption>
+          <thead><tr><th scope="col">Dimension</th><th scope="col"><a href="https://github.com/Lifelong-Robot-Learning/LIBERO">LIBERO ↗</a></th><th scope="col"><a href="https://safevla.github.io/">Safety-CHORES ↗</a></th><th scope="col">Safety-CHORES-RL <span>Ours · companion tooling</span></th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Primary purpose</th><td>Knowledge transfer in lifelong robot learning.</td><td>Safety evaluation and constrained learning for embodied policies.</td><td>Reconstruct a decision state, sample futures, and check execution.</td></tr>
+            <tr><th scope="row">Tasks & embodiment</th><td>130 manipulation tasks across spatial, object, goal, and mixed suites.</td><td>Long-horizon indoor navigation and mobile manipulation.</td><td>Uses Safety-CHORES tasks; the recordings here show selected Fetch episodes.</td></tr>
+            <tr><th scope="row">Safety lens</th><td>Task success and transfer are the original benchmark's main focus.</td><td>Explicit safety constraints and costs alongside task completion.</td><td>Retains branch success, costs, and failed outcomes; checks the chosen trajectory step by step.</td></tr>
+            <tr><th scope="row">State & replay</th><td>Environment wrapper exposes simulator state and state-setting APIs.</td><td>Provides the underlying task, simulator, and safety signals.</td><td>Rebuilds simulator and policy history with reset + prefix replay in isolated workers.</td></tr>
+            <tr><th scope="row">What you get</th><td>Task suites, demonstrations, training and evaluation code.</td><td>Safety task infrastructure and SafeVLA training/evaluation code.</td><td>Budgeted search APIs, saved trajectories, execution checks, and visual replay receipts.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="scope-note">Sources: <a href="https://github.com/Lifelong-Robot-Learning/LIBERO">LIBERO repository</a>, <a href="https://github.com/Lifelong-Robot-Learning/LIBERO/blob/master/libero/libero/envs/env_wrapper.py">LIBERO state API</a>, <a href="https://safevla.github.io/">SafeVLA / Safety-CHORES project</a>, and <a href="https://github.com/PKU-Alignment/SafeVLA">upstream code</a>. This compares scope and interfaces. We have not run a matched LIBERO comparison; the selected demos do not establish superior benchmark performance.</p>
+    </section>
+
+    <section class="evidence-section" id="evidence"><div class="wrap"><div class="section-heading"><div><span class="eyebrow">04 / EVIDENCE & SCOPE</span><h2>Measured behavior.<br>Visible limitations.</h2></div><p>Receipts retain the selected actions, outcomes, timings, and verification scope for the tested native environment.</p></div>
       <div class="evidence-table" role="table" aria-label="Recorded validation evidence">
         <div role="row"><div role="cell"><strong>75 / 75</strong><span>live execution checks matched</span></div><p role="cell">The FirstSuccess example compares each executed state and transition with its saved witness. Search took 180.3 s; the complete run took 339.8 s.</p><a role="cell" href="assets/first-success.json">Run receipt ↗</a></div>
         <div role="row"><div role="cell"><strong>5 branches</strong><span>regenerated from saved seeds</span></div><p role="cell">All 585 continuation actions and 120 prefix actions reproduced their recorded transition evidence. The captured images passed 1,420 camera hash checks.</p><a role="cell" href="guides/native.html#branch-comparison-animations">Verification scope ↗</a></div>
         <div role="row"><div role="cell"><strong>45 tests</strong><span>passed in an isolated Python environment</span></div><p role="cell">The same 75-action native result reproduced on Apex. Existing simulator inputs were reused; six dependency constraints remain unresolved.</p><a role="cell" href="assets/apex-fresh-environment.json">Environment receipt ↗</a></div>
       </div>
-      <details class="scope-details"><summary>What these results establish—and what remains open <span aria-hidden="true">+</span></summary><div><p>Workers reconstruct state through reset and action replay. The API does not clone hidden physics state. The FirstSuccess example checked original per-step state hashes; the older branch study retained transitions and endpoint observations, but not original root snapshots or intermediate state hashes.</p><p>Full captured prefix states agree across the new branch reconstructions. This is bounded replay evidence, not a general determinism guarantee. Zero recorded cost in an example does not establish general safety or policy efficacy.</p><p>The native player, assets, SafeVLA source, and checkpoint are external. The broader four-case development study had no safe successes for either evaluated controller. Read the <a href="guides/release.html">release assessment</a> for all outcomes, dependency conflicts, and known limitations.</p></div></details>
+      <details class="scope-details"><summary>What these results establish—and what remains open <span aria-hidden="true">+</span></summary><div><p>Workers reconstruct state through reset and action replay. The API does not clone hidden physics state. The FirstSuccess example checked original per-step state hashes; the older branch study retained transitions and endpoint observations, but not original root snapshots or intermediate state hashes.</p><p>Full captured prefix states agree across the new branch reconstructions. This is bounded replay evidence, not a general determinism guarantee. Zero recorded cost in an example does not establish general safety or policy efficacy.</p><p>The native player, assets, SafeVLA source, and checkpoint are external. The separate four-case tooling study had no safe successes for either evaluated controller. Read the <a href="guides/release.html">validation and limitations</a> for all outcomes, dependency conflicts, and verification scope.</p></div></details>
     </div></section>
 
-    <section class="wrap reproduce-section" id="reproduce"><div><span class="eyebrow">04 / GET STARTED</span><h2>Try the API.<br>Bring your simulator.</h2><p>The portable examples run without a native simulator. Native experiments require the documented player, assets, policy, and checkpoint.</p><div class="resource-links"><a href="guides/native.html">Native setup & reproduction <span>↗</span></a><a href="guides/api.html">Rollout API & execution semantics <span>↗</span></a><a href="guides/release.html">Development release status <span>↗</span></a><a href="https://github.com/tumeteor/safety-chores-rl">Source on GitHub <span>↗</span></a></div></div><div class="code-panel"><div class="code-heading"><span>PORTABLE EXAMPLES</span><button class="copy-button" data-copy="quickstart-code">Copy</button></div><pre><code id="quickstart-code">git clone https://github.com/tumeteor/safety-chores-rl.git
+    <section class="wrap reproduce-section" id="reproduce"><div><span class="eyebrow">05 / GET STARTED</span><h2>Try the API.<br>Bring your simulator.</h2><p>The portable examples run without a native simulator. Native experiments require the documented player, assets, policy, and checkpoint.</p><div class="resource-links"><a href="guides/native.html">Native setup & reproduction <span>↗</span></a><a href="guides/api.html">Rollout API & execution semantics <span>↗</span></a><a href="guides/release.html">Validation & limitations <span>↗</span></a><a href="https://github.com/tumeteor/safety-chores-rl">Source on GitHub <span>↗</span></a></div></div><div class="code-panel"><div class="code-heading"><span>PORTABLE EXAMPLES</span><button class="copy-button" data-copy="quickstart-code">Copy</button></div><pre><code id="quickstart-code">git clone https://github.com/tumeteor/safety-chores-rl.git
 cd safety-chores-rl
 python -m pip install -e ".[test]"
 python -m pytest -q
 python examples/fast_search.py --workers 2</code></pre><p>Native workflow: reconstruct → search → retain witness → checked execution.</p><span id="copy-status" class="sr-only" aria-live="polite"></span></div></section>
   </main>
-  <footer class="wrap site-footer"><a class="brand" href="./"><img src="favicon.svg" width="25" height="25" alt=""><span>Safety-CHORES / RL</span></a><span>Development evidence · October 2026</span><a href="guides/third-party.html">Third-party notices</a><a href="https://github.com/tumeteor/safety-chores-rl">GitHub ↗</a></footer>
+  <footer class="wrap site-footer"><a class="brand" href="./"><img src="favicon.svg" width="25" height="25" alt=""><span>Safety-CHORES / RL</span></a><a href="#paper">Research software · Nguyen et al.</a><a href="guides/third-party.html">Third-party notices</a><a href="https://github.com/tumeteor/safety-chores-rl">GitHub ↗</a></footer>
 </body>
 </html>

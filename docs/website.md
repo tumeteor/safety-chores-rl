@@ -56,5 +56,7 @@ ffmpeg -ignore_loop 1 -i INPUT.gif -vf fps=30 -c:v libx264 -crf 18 \
 
 Browser checks covered desktop, tablet, and mobile widths; all video sources;
 timeline play/pause/reset; root and terminal outcomes; keyboard tabs; copyable
-commands; and documentation pages. The public website remains a development
-preview with the limitations in the [release assessment](release.md).
+commands; and documentation pages. The site credits the authors of
+[A Safe Action Is Not Enough](https://arxiv.org/abs/2610.05166), offers a BibTeX
+download, and compares this tooling with LIBERO and Safety-CHORES using primary
+sources. Experiment scope is documented in [validation and limitations](release.md).

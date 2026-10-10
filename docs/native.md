@@ -3,8 +3,8 @@
 The native adapter currently requires Linux, an NVIDIA/Vulkan environment,
 the modified simulator player, a compatible SafeVLA installation, and local
 benchmark tasks, houses, and assets. Installing this Python package does not
-install those components. The current scope uses the tested existing environment;
-fresh-environment installation testing is outside the release criteria.
+install those components. Validation covers the documented existing installation
+and an isolated Python environment that reused the same native components.
 The Python-only examples do not establish native task success.
 
 Pin the existing installation explicitly:

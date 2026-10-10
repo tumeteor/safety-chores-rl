@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite our paper using the preferred citation below."
+title: "Safety-CHORES-RL"
+type: software
+authors:
+  - family-names: Nguyen
+    given-names: Tu
+repository-code: "https://github.com/tumeteor/safety-chores-rl"
+url: "https://tumeteor.github.io/safety-chores-rl/"
+preferred-citation:
+  type: article
+  title: "A Safe Action Is Not Enough: Feasible-Future Decoding for Vision-Language-Action Policies"
+  authors:
+    - family-names: Nguyen
+      given-names: Tu
+    - family-names: Zimmer
+      given-names: Matthieu
+    - family-names: Vu
+      given-names: Vu Anh
+    - family-names: Wang
+      given-names: Ziyi
+    - family-names: Nielsen
+      given-names: Jannik Hammel
+    - family-names: Zhou
+      given-names: Xuebing
+    - family-names: Bou Ammar
+      given-names: Haitham
+  year: 2026
+  journal: arXiv
+  doi: "10.48550/arXiv.2610.05166"
+  url: "https://arxiv.org/abs/2610.05166"
