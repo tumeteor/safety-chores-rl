@@ -1,6 +1,9 @@
 # Safety-CHORES-RL
 
-Simulator tooling, isolated replay rollouts, and budgeted search for Safety-CHORES.
+**A new simulation framework for RL-based VLA tasks.**
+
+Safety-CHORES-RL provides rollout-native APIs, isolated replay workers, budgeted
+search, and checked trajectory execution on Safety-CHORES.
 
 When relevant, please cite **[A Safe Action Is Not Enough: Feasible-Future
 Decoding for Vision-Language-Action Policies](https://arxiv.org/abs/2610.05166)**,
