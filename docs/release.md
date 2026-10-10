@@ -3,7 +3,7 @@
 No public repository, remote, release, or package publication has been created.
 The current source tree is an independent benchmark/API draft.
 
-Assessment updated on 2026-10-09: bounded native reset-and-replay search is working
+Assessment updated on 2026-10-10: bounded native reset-and-replay search is working
 on the existing installation. The README includes one measured native task-success
 example. The source/API/demo are suitable for review as a development preview
 targeting that tested environment. Fresh-machine or fresh-environment installation
@@ -14,6 +14,27 @@ Publication audit on 2026-10-09: the six local commits were inspected across
 84 unique file blobs. Targeted scans found no embedded credentials, private
 installation paths, private controller references, checkpoints, or ignored
 research artifacts in the tracked history.
+
+Optional fresh-Python-environment check, run on 2026-10-09 and audited on
+2026-10-10:
+
+- Installed the package wheel in a new virtual environment with system and user
+  site packages disabled. Verified that the package, NumPy, Torch, torchvision,
+  AI2-THOR, AllenAct, and AllenAct plugins imported from that environment.
+- All 45 tests passed. The native demonstration used 2 of 8 allowed continuations
+  and completed 75 live actions with zero cost and every execution check matching.
+  Native elapsed time was 332.1 seconds; search took 177.9 seconds.
+- The successful action sequence and all its state signatures exactly matched
+  the original README demonstration. The simulator binary, driver, external
+  SafeVLA sources, assets, and checkpoint were reused; they were not rebuilt.
+- `pip check` reported six existing version-constraint conflicts: MuJoCo versus
+  safety-gymnasium/gymnasium-robotics; NumPy versus gymnasium-robotics; pandas
+  versus omnisafe; and Pillow/torchvision versus AllenAct. Native execution and
+  tests passed despite these conflicts. This is a tested pinned configuration,
+  not a dependency lock that passes the resolver's consistency check.
+- Setup required the host's proxy configuration. Early network/setup-helper
+  failures were retained; the native demonstration succeeded on its first run
+  after dependency installation. See the [audited receipt](assets/apex-fresh-environment.json).
 
 Latest verification on 2026-10-09:
 

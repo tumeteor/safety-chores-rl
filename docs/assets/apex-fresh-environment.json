@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_date": "2026-10-09",
+  "audited_date": "2026-10-10",
+  "scope": "Fresh isolated Python environment on the existing Linux/H100 host. Existing native player, drivers, SafeVLA sources, task assets and model checkpoint reused; no native-player rebuild.",
+  "wheel_sha256": "f6a58b5e18f456e8ee76cb79406156643edb857d082c7ecbcc12baef432204f4",
+  "raw_native_report_sha256": "9b9e8510ffb035e09d90e524bac2614b43dd9695fb026e0f075886adfdd16bce",
+  "native_status": "complete",
+  "task_id": 0,
+  "seed": 1909,
+  "episode_limit": 200,
+  "success": true,
+  "cost": 0.0,
+  "actions": 75,
+  "all_execution_steps_matched": true,
+  "live_unchanged": true,
+  "native_elapsed_seconds": 332.12006732681766,
+  "search_usage": {
+    "rollouts": 2,
+    "native_steps": 160,
+    "cache_hits": 0,
+    "elapsed_seconds": 177.9059785134159,
+    "budget_exhausted": false,
+    "exhaustive_rollouts": 8
+  },
+  "tests": {
+    "passed": 45,
+    "skipped": 0
+  },
+  "isolation": {
+    "system_site_packages": false,
+    "user_site_enabled": false,
+    "verified_isolated_modules": [
+      "ai2thor",
+      "allenact",
+      "allenact_plugins",
+      "numpy",
+      "safety_chores_rl",
+      "torch",
+      "torchvision"
+    ]
+  },
+  "comparison_with_original_demo": {
+    "source_identity": true,
+    "successful_actions": true,
+    "all_successful_state_signatures": true
+  },
+  "dependency_check": {
+    "exit_code": 1,
+    "conflicts": [
+      "safety-gymnasium 1.0.0 has requirement mujoco==2.3.3, but you have mujoco 3.3.7.",
+      "omnisafe 0.5.0 has requirement pandas==2.0.3, but you have pandas 2.3.3.",
+      "gymnasium-robotics 1.2.2 has requirement mujoco==2.3.3, but you have mujoco 3.3.7.",
+      "gymnasium-robotics 1.2.2 has requirement numpy<1.24.0,>=1.21.0, but you have numpy 1.26.4.",
+      "allenact 0.5.5a0 has requirement Pillow<10.3.0,>=8.2.0, but you have pillow 11.3.0.",
+      "allenact 0.5.5a0 has requirement torchvision<=0.16.2,>=0.7.0, but you have torchvision 0.19.1+cu121."
+    ]
+  },
+  "setup_notes": [
+    "Installer processes explicitly used the proxy settings from the host shell configuration.",
+    "Dependencies were installed at the tested versions, using cached wheels and locally built external AllenAct packages.",
+    "Prior setup failures were retained; no native demo retry was needed after environment installation."
+  ]
+}

@@ -79,6 +79,11 @@ external dependencies. This local release draft targets the tested native
 environment. See [setup requirements](docs/native.md) and
 [validation status](docs/release.md).
 
+The same 75-action result also reproduced in a fresh isolated Python environment
+on the existing host, with all 45 tests passing. The
+[environment-check receipt](docs/assets/apex-fresh-environment.json) records the
+reused simulator inputs and six dependency-version conflicts reported by `pip check`.
+
 ## Try the portable examples
 
 ```sh
