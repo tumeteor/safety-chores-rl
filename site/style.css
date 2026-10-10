@@ -942,18 +942,18 @@ input[type=range] {
   font-weight:650;
   letter-spacing:.12em
 }
-.guide-native {
+.guide-note {
   max-width:900px;
   padding-top:35px;
   font-size:15px
 }
-.guide-native>h1 {
+.guide-note>h1 {
   margin:10px 0 18px;
   font-family:var(--serif);
   font-size:48px;
   letter-spacing:-.035em
 }
-.guide-native .note-lead {
+.guide-note .note-lead {
   font-size:17px;
   line-height:1.75;
   max-width:780px
@@ -971,19 +971,19 @@ input[type=range] {
 .note-nav a {
   text-decoration:none
 }
-.guide-native h2 {
+.guide-note h2 {
   font-size:27px;
   letter-spacing:-.025em;
   margin:34px 0 14px
 }
-.guide-native p {
+.guide-note p {
   margin:12px 0
 }
-.guide-native table {
+.guide-note table {
   margin:18px 0;
   font-size:12px
 }
-.guide-native pre,.reference-article pre {
+.guide-note pre,.reference-article pre {
   padding:18px 20px;
   line-height:1.75;
   margin:16px 0;

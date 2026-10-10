@@ -48,8 +48,10 @@ def guide_document(name, text):
                 f'<article class="guide reference-article">{back}'
                 f'<p class="guide-label">PYTHON API · VERSION 1</p>{content}</article></main>')
     else:
-        note = ' guide-native' if name == 'native' else ''
-        label = '<p class="guide-label">TECHNICAL NOTE · NATIVE EXECUTION</p>' if name == 'native' else ''
+        note = ' guide-note' if name in {'native', 'release'} else ''
+        labels = {'native': 'TECHNICAL NOTE · NATIVE EXECUTION',
+                  'release': 'TECHNICAL NOTE · VALIDATION'}
+        label = f'<p class="guide-label">{labels[name]}</p>' if name in labels else ''
         body = f'<main id="main" class="wrap guide{note}">{back}{label}{content}</main>'
     return f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
