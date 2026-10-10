@@ -44,8 +44,12 @@ available. Workers reconstruct branches by reset and action replay; the API
 does not provide a hidden physics-state clone. See [API semantics](docs/api.md).
 
 Native experiments require an external simulator player, tasks/assets, compatible
-SafeVLA environment, and checkpoint. With that environment active, automatically
-wire the existing installation and run the demo:
+SafeVLA environment, and checkpoint. Native camera rendering uses a **Vulkan
+GPU**, and the default policy uses **CUDA**. GIF composition and trajectory
+plotting from saved frames and poses run on the **CPU**.
+
+With the SafeVLA environment active, automatically wire the existing installation
+and run the demo:
 
 ```sh
 python -m pip install -e ".[native]" pillow

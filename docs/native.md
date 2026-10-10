@@ -16,7 +16,12 @@ python tools/setup_native.py
 bash runs/native-setup/run_demo.sh --save-frames
 ```
 
-It prints the full number of task rows in your configured benchmark. The default
+**CPU and GPU use:** Native camera images are rendered on the GPU through
+Vulkan; the default policy uses CUDA. GIF composition and trajectory plotting
+from saved frames and poses run on the CPU. Capturing new frames or replaying
+trajectories still uses the native simulator and its Vulkan GPU.
+
+The setup helper prints the full number of task rows in your configured benchmark. The default
 asset preflight checks task 0; it does not restrict the available episode set.
 The simulator and Python environment must already be installed. See the tested
 [environment and dependency constraints](release.md#environment-validation).
