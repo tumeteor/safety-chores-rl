@@ -44,7 +44,20 @@ available. Workers reconstruct branches by reset and action replay; the API
 does not provide a hidden physics-state clone. See [API semantics](docs/api.md).
 
 Native experiments require an external simulator player, tasks/assets, compatible
-SafeVLA environment, and checkpoint. The selected 75-action result reproduced in
+SafeVLA environment, and checkpoint. With that environment active, automatically
+wire the existing installation and run the demo:
+
+```sh
+python -m pip install -e ".[native]" pillow
+python tools/setup_native.py
+bash runs/native-setup/run_demo.sh --save-frames
+```
+
+The helper generates both configs, environment settings, and a launcher. It can
+download the official checkpoint with `--download-checkpoint`; see the
+[native setup guide](docs/native.md#setup) for discovery and overrides.
+
+The selected 75-action result reproduced in
 an isolated Python environment on Apex with all 45 tests passing; the
 [environment receipt](docs/assets/apex-fresh-environment.json) also records six
 dependency-version conflicts. Native validation is scoped to that tested configuration.

@@ -6,44 +6,60 @@
 
 ## Setup
 
-Use **Linux with NVIDIA/Vulkan**, the modified simulator player, task/house assets,
-and a compatible **SafeVLA + PyTorch/AllenAct** environment with a checkpoint.
-These native components are external to the Python package. The tested versions
-and dependency constraints are listed in [validation and limitations](release.md#environment-validation).
-
-<details markdown="1" class="note-details">
-<summary>Prepare the native and policy configurations</summary>
+Use **Linux with NVIDIA/Vulkan** and activate your existing **SafeVLA Python
+environment**. The setup helper locates the installed sources, modified player,
+task/house data, assets, and checkpoint, then generates the configs and launcher:
 
 ```sh
-python -m pip install -e ".[test,native]" pillow
-python tools/prepare_native_config.py \
-  --safevla-repo /path/to/SafeVLA \
-  --asset-root /path/to/assets \
-  --benchmark /path/to/fetchtype_val.jsonl.gz \
-  --houses /path/to/val.jsonl.gz \
-  --build-manifest /path/to/player/checkpoint-build.json \
-  --player /path/to/player/thor-Linux64-local \
-  --output runs/native.json
+python -m pip install -e ".[native]" pillow
+python tools/setup_native.py
+bash runs/native-setup/run_demo.sh --save-frames
 ```
 
-Create `runs/policy.json` with the checkpoint's actual path and SHA256:
+It prints the full number of task rows in your configured benchmark. The default
+asset preflight checks task 0; it does not restrict the available episode set.
+The simulator and Python environment must already be installed. See the tested
+[environment and dependency constraints](release.md#environment-validation).
 
-```json
-{
-  "checkpoint": "/path/to/checkpoint.pt",
-  "checkpoint_sha256": "REPLACE_WITH_CHECKPOINT_SHA256",
-  "device": "cuda:0",
-  "greedy": false
-}
+<details markdown="1" class="note-details">
+<summary>Discovery, checkpoint download, and generated files</summary>
+
+```sh
+# Use a different installation root, or reuse a previously pinned config.
+python tools/setup_native.py --installation-root ../SafeVLA
+python tools/setup_native.py --from-config runs/native.json
+
+# If the task's official checkpoint is not installed, download it (~2 GB).
+python tools/setup_native.py --download-checkpoint
+
+# Check assets for more task IDs without changing the benchmark file.
+python tools/setup_native.py --task fetch --task-ids 0 1 2 3 --output runs/fetch-setup
 ```
 
-Obtain the digest with `sha256sum /path/to/checkpoint.pt`. The loader rejects
-unexpected or missing weights unless explicitly allowed. Test-time image
-augmentation is disabled.
+These are alternative setup commands. Discovery checks standard directories
+under the installation root, sibling SafeVLA directories, and existing
+`SAFEVLA_REPO`, `SAFEVLA_CHECKPOINT`, `OBJAVERSE_*`, `PYTHONPATH`, and
+`SAFETY_CHORES_PLAYER` settings. `SAFETY_CHORES_NATIVE_CONFIG` can identify an
+existing config. Ambiguous or missing inputs produce an explicit error and an
+override flag; run `python tools/setup_native.py --help` for all options.
 
-Keep these configuration files local: they contain installation paths. Native
-configuration hashes identify the player, task inputs, and external sources;
-they do not constitute a complete environment or asset lockfile.
+The helper writes `native.json`, `policy.json`, `env.sh`, `run_demo.sh`, and a
+`setup.json` receipt under `runs/native-setup`. It hashes the checkpoint, verifies
+the player's artifact manifest, checks assets for the requested task IDs, and
+preserves existing source and data files. Repeating an identical setup is safe;
+use a new output directory when changing inputs. For the other recipes in this
+note, first run `source runs/native-setup/env.sh`.
+
+Optional downloads use the [official SafeVLA weights](https://huggingface.co/SafetyEmbodiedAI/safety-model)
+and verify their SHA256: `safe_fetch.pt`, `safe_pickup.pt`, or `safe_objnav.pt`.
+The Fetch checkpoint is the same artifact used in the recorded demonstration.
+Use `--checkpoint` for a custom policy. The policy loader still checks model
+compatibility; test-time image augmentation is disabled.
+
+Keep generated files local because they contain installation paths. Artifact
+checks configure the installation; native execution is checked when you run
+the demo. This helper does not install the simulator or rebuild the Python
+environment. Proxy settings are inherited from the calling shell.
 
 </details>
 
@@ -63,9 +79,7 @@ Both used continuation seed 4100. [Run receipt](assets/first-success.json) ·
 [Watch the demonstration](../README.md#a-practical-native-example).
 
 ```sh
-PYTHONHASHSEED=0 CUBLAS_WORKSPACE_CONFIG=:4096:8 xvfb-run -a \
-  python examples/native_first_success.py \
-  --config runs/native.json --policy-config runs/policy.json \
+bash runs/native-setup/run_demo.sh \
   --out runs/first-success --task-id 0 --seed 1909 \
   --vulkan-device 0 --workers 1 --candidates 2 \
   --sample-seeds 4100 4101 4102 4103 --episode-limit 200 --save-frames
@@ -106,7 +120,7 @@ outcomes, and invalid branches remain in the report.
 ```sh
 PYTHONHASHSEED=0 CUBLAS_WORKSPACE_CONFIG=:4096:8 xvfb-run -a \
   python examples/native_task_study.py \
-  --config runs/native.json --policy-config runs/policy.json \
+  --config runs/native-setup/native.json --policy-config runs/native-setup/policy.json \
   --out runs/task-study --task-id 0 --seed 1909 --episode-limit 200 \
   --vulkan-device 0 --workers 2 --query-steps 0 40 \
   --candidates 3 --sample-seeds 4100 4101 4102 4103
@@ -117,7 +131,7 @@ live actions after a fixed prefix:
 
 ```sh
 PYTHONHASHSEED=0 xvfb-run -a python examples/native_search.py \
-  --config runs/native.json --out runs/native-search \
+  --config runs/native-setup/native.json --out runs/native-search \
   --vulkan-device 0 --episode-limit 150 --samples 2 --live-steps 2 \
   --wall-seconds 600 --prefix 0 0 0 0 0 0 0 0
 ```
@@ -146,7 +160,7 @@ camera images** matched the saved live frames.
 ```sh
 PYTHONHASHSEED=0 CUBLAS_WORKSPACE_CONFIG=:4096:8 xvfb-run -a \
   python examples/native_trajectory_replay.py \
-  --config runs/native.json --policy-config runs/policy.json \
+  --config runs/native-setup/native.json --policy-config runs/native-setup/policy.json \
   --report runs/first-success/report.json --out runs/trajectory-replay \
   --vulkan-device 0
 
@@ -198,13 +212,13 @@ the original file bytes and line endings that contribute to source identity.
 ```sh
 PYTHONHASHSEED=0 CUBLAS_WORKSPACE_CONFIG=:4096:8 xvfb-run -a \
   python examples/native_branch_replay.py \
-  --config runs/native.json --policy-config runs/policy.json \
+  --config runs/native-setup/native.json --policy-config runs/native-setup/policy.json \
   --report runs/canary-task0-seed892/report.json --query-step 0 \
   --selection 1:9002 1:9001 --out runs/branches-seed892 --vulkan-device 0
 
 PYTHONHASHSEED=0 CUBLAS_WORKSPACE_CONFIG=:4096:8 xvfb-run -a \
   python examples/native_branch_replay.py \
-  --config runs/native.json --policy-config runs/policy.json \
+  --config runs/native-setup/native.json --policy-config runs/native-setup/policy.json \
   --report runs/task1-seed1909/report.json --query-step 40 \
   --selection 0:4102 0:4100 0:4101 --out runs/branches-prefix40 --vulkan-device 0
 
