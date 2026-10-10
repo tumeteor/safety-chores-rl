@@ -30,18 +30,32 @@ def explorer_scene(filename):
 
 
 def guide_document(name, text):
-    content = markdown.markdown(text, extensions=['fenced_code', 'tables', 'toc'])
+    renderer = markdown.Markdown(extensions=['fenced_code', 'tables', 'toc', 'md_in_html'],
+                                 extension_configs={'toc': {'toc_depth': '2-2'}})
+    content = renderer.convert(text)
     content = re.sub(r'href="([^"#]+)\.md([^"]*)"', r'href="\1.html\2"', content)
     content = content.replace('href="../README.html', 'href="../index.html')
     content = content.replace('#a-practical-native-example', '#demo')
     content = content.replace('href="../THIRD_PARTY_NOTICES.html', 'href="third-party.html')
     content = content.replace('href="assets/', 'href="../assets/').replace('src="assets/', 'src="../assets/')
     title = re.search(r'^# (.+)', text, flags=re.M).group(1)
+    back = '<a class="guide-back" href="../index.html">← Project website</a>'
+    if name == 'api':
+        body = (f'<main id="main" class="wrap reference-layout">'
+                f'<aside class="reference-sidebar"><span class="small-label">SAFETY-CHORES-RL</span>'
+                f'<details class="reference-outline" open><summary>On this page</summary>'
+                f'<nav aria-label="API reference sections">{renderer.toc}</nav></details></aside>'
+                f'<article class="guide reference-article">{back}'
+                f'<p class="guide-label">PYTHON API · VERSION 1</p>{content}</article></main>')
+    else:
+        note = ' guide-native' if name == 'native' else ''
+        label = '<p class="guide-label">TECHNICAL NOTE · NATIVE EXECUTION</p>' if name == 'native' else ''
+        body = f'<main id="main" class="wrap guide{note}">{back}{label}{content}</main>'
     return f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{html.escape(title)} — Safety-CHORES-RL</title><link rel="icon" href="../favicon.svg"><link rel="stylesheet" href="../style.css"></head>
 <body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="../index.html"><img src="../favicon.svg" width="30" height="30" alt="">Safety-CHORES / RL</a><nav aria-label="Documentation"><a href="native.html">Native setup</a><a href="api.html">API</a><a href="release.html">Validation</a></nav></header>
-<main id="main" class="wrap guide"><a class="guide-back" href="../index.html">← Project website</a>{content}</main>
+{body}
 <footer class="wrap site-footer"><a href="../index.html#paper">Paper · Nguyen et al. · A Safe Action Is Not Enough</a><a href="https://github.com/tumeteor/safety-chores-rl">Source on GitHub ↗</a></footer></body></html>'''
 
 
