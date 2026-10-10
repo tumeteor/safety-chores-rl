@@ -2,8 +2,7 @@
 
 Safety-CHORES-RL accompanies [A Safe Action Is Not Enough: Feasible-Future
 Decoding for Vision-Language-Action Policies](https://arxiv.org/abs/2610.05166)
-by Tu Nguyen, Matthieu Zimmer, Vu Anh Vu, Ziyi Wang, Jannik Hammel Nielsen,
-Xuebing Zhou, and Haitham Bou Ammar. Please cite that paper when using this work.
+by Nguyen et al. Please cite that paper when using this work.
 
 This project contains generic rollout and search APIs, an independent
 benchmark adapter, and simulator observation/cost helpers. The adapter calls

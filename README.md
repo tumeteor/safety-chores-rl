@@ -4,8 +4,7 @@ Simulator tooling, isolated replay rollouts, and budgeted search for Safety-CHOR
 
 Research software accompanying **[A Safe Action Is Not Enough: Feasible-Future
 Decoding for Vision-Language-Action Policies](https://arxiv.org/abs/2610.05166)**,
-by **Tu Nguyen, Matthieu Zimmer, Vu Anh Vu, Ziyi Wang, Jannik Hammel Nielsen,
-Xuebing Zhou, and Haitham Bou Ammar**. [BibTeX](CITATION.bib).
+by **Nguyen et al.** [BibTeX](CITATION.bib).
 
 This repository provides native rollout and search tooling. The paper's VICS-G
 decoder requires no online rollouts; it studies rollout augmentation separately.
