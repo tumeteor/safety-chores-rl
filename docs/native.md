@@ -168,3 +168,70 @@ change base position. The animated map uses recovered poses and requires every
 replayed camera hash to match the corresponding original live frame. In the
 published selected example, both paths (85 and 75 actions) matched every saved
 signature, and all 152 successful-path camera images matched the live frames.
+
+## Branch comparison animations
+
+The README includes two further episodes from the recorded `BestOfN` study:
+
+| Capture | Search root | Selected candidate / suffix seeds | Recorded outcomes |
+| --- | --- | --- | --- |
+| [Episode 0, seed 892](assets/branches-seed892.json) | Initial state, empty prefix | `1` / `9002`, `9001` | Success: 74 actions, cost 0; limit: 150 actions, cost 0 |
+| [Episode 1, seed 1909](assets/branches-prefix40.json) | After 40 live actions | `0` / `4102`, `4100`, `4101` | Success: 98 actions, cost 0; success: 103 actions, cost 3; limit: 160 actions, cost 0 |
+
+Action counts in this table exclude the prefix. These are selected branches
+from the earlier study, not additional `FirstSuccess` performance trials. The
+second comparison deliberately retains a costly success and an unsuccessful
+branch alongside a zero-cost success.
+
+For every selected branch, `examples/native_branch_replay.py` starts a fresh
+seeded episode, forces the recorded live prefix, forces the candidate action,
+then regenerates the policy continuation using the original suffix seed. There
+is no hidden physics-state clone. Prefix replay runs policy inference and feeds
+back the actual actions to rebuild policy history along with the simulator.
+The collector reads current observations and cached world metadata without
+additional render or movement calls.
+
+The collector checks every regenerated action, reward, cost, termination,
+original root candidate probabilities, and the complete final observation
+(including both camera hashes). Full reset/prefix snapshots must agree across
+the newly reconstructed branches. The original study did not retain root
+snapshots or intermediate state hashes, so these captures do **not** establish
+per-step state equality against the historical run. Both JSON receipts retain
+the original report hash, collector hash, reconstructed state hashes, world
+poses, image hashes, and explicit verification scope.
+
+Use the exact runtime sources, native configuration, and policy checkpoint
+from the original report. These historical clips reused the frozen package
+sources corresponding to commit `d0de2d9`, including their original file bytes
+and line endings, which contribute to the runtime identity. Example capture
+commands for the saved study cases:
+
+```sh
+PYTHONHASHSEED=0 CUBLAS_WORKSPACE_CONFIG=:4096:8 xvfb-run -a \
+  python examples/native_branch_replay.py \
+  --config runs/native.json --policy-config runs/policy.json \
+  --report runs/canary-task0-seed892/report.json --query-step 0 \
+  --selection 1:9002 1:9001 --out runs/branches-seed892 --vulkan-device 0
+
+PYTHONHASHSEED=0 CUBLAS_WORKSPACE_CONFIG=:4096:8 xvfb-run -a \
+  python examples/native_branch_replay.py \
+  --config runs/native.json --policy-config runs/policy.json \
+  --report runs/task1-seed1909/report.json --query-step 40 \
+  --selection 0:4102 0:4100 0:4101 --out runs/branches-prefix40 --vulkan-device 0
+
+python -m pip install pillow
+python tools/render_branch_replay.py \
+  --capture runs/branches-seed892/branches.json --out runs/branches-seed892.gif
+python tools/render_branch_replay.py \
+  --capture runs/branches-prefix40/branches.json --out runs/branches-prefix40.gif
+```
+
+The renderer verifies each displayed source image against the capture receipt,
+shows reset/replay/continuation phases, and preserves outcome/cost milestones.
+The default keeps every second action, playing at eight actions per second
+with additional holds at reset, the reconstructed root, and the final outcomes.
+The columns align by action count, not elapsed execution time. Branches were
+collected sequentially. Navigation images retain their original resolution;
+manipulation images are reduced to fit. Trajectories show base X/Z position and
+heading with a one-metre scale; room outlines omit doors and furniture.
+Cyan marks the shared prefix, followed by each branch's own continuation color.

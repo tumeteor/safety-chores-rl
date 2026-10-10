@@ -49,6 +49,37 @@ continuations were left unused; they were not measured in this run.
 The [result receipt](docs/assets/first-success.json) retains both evaluated
 outcomes, the action sequence, state hashes, timings, and source identities.
 
+### Reset, replay, and compare branches
+
+Two additional episodes from the earlier development study show how workers
+reconstruct a search state. Each column **resets the same seeded episode,
+replays the saved live actions, then tries a continuation**. These are selected
+recorded `BestOfN` branches, separate from the `FirstSuccess` example above.
+
+![Two branches from episode seed 892: reset to the same root, then a successful continuation and a failed continuation](docs/assets/branches-seed892.gif)
+
+**Episode 0 / seed 892:** the prefix is empty. The same initial candidate and
+different continuation seeds yield a zero-cost success after 74 actions and
+no success at the 150-action limit. Two of four recorded branches are shown.
+
+![Three branches after reconstructing a 40-action prefix: zero-cost success, costly success, and no success](docs/assets/branches-prefix40.gif)
+
+**Episode 1 / seed 1909:** every worker replays the same **40 live actions**
+before branching. Three of twelve recorded continuations are shown: success
+with cost 0 after 98 more actions, success with cost 3 after 103, and no success
+after the remaining 160 actions. All three use the same candidate action and
+different policy continuation seeds. A successful grasp can still incur cost.
+
+Navigation/manipulation images and base trajectories come from native replays.
+Cyan paths mark the shared prefix; each branch's color marks its continuation.
+Playback aligns action counts at 8 actions/second; completed branches hold
+their final frame. Captures were collected sequentially. Regenerated actions,
+rewards/costs, termination, and final observations match the saved branches;
+full reset/prefix states match across the reconstructed workers. The older
+study did not save original intermediate state hashes or root snapshots.
+These selected examples are not success-rate estimates. See the
+[replay receipts and reproduction commands](docs/native.md#branch-comparison-animations).
+
 ### Why this method is inexpensive
 
 `FirstSuccess` tries candidates in caller priority order and evaluates seeds in
