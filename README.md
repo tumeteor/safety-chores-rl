@@ -2,118 +2,25 @@
 
 Simulator tooling, isolated replay rollouts, and budgeted search for Safety-CHORES.
 
-**Find a successful continuation, keep the whole path, and check every executed
-step.** The native example below completes a Fetch task using two search rollouts
-and an external SafeVLA policy on an existing simulator installation.
+**[Explore the project website →](https://tumeteor.github.io/safety-chores-rl/)**
 
-![First-success search: sample continuations, stop at zero-cost success, execute with state checks](docs/assets/first-success.svg)
+The website brings together native camera recordings, animated trajectories,
+reset → replay → branch comparisons, and an interactive trajectory explorer.
+
+![Native camera views and a checked trajectory](docs/assets/first-success.png)
 
 ## A practical native example
 
-Task: **go to a basketball and grasp that basketball**.
+`FirstSuccess` finds a completed zero-cost continuation, retains the whole path,
+and checks every executed transition. The selected native example used **2 of 8
+allowed rollouts**, then completed **75 checked actions with zero recorded cost**.
+Search took 180.3 seconds on one H100; the complete run took 339.8 seconds.
 
-![Top-down trajectories: the failed continuation and the successful executed route](docs/assets/first-success-trajectories.svg)
-
-Orange is the failed rollout; green is the successful route. The robot base
-travels 3.6 m and 6.9 m respectively. Coordinates were recovered by replaying the
-saved actions: **all 160 replayed actions matched their original state hashes**.
-The map shows room outlines, with doors and furniture omitted. Turning and arm
-movement can leave the base position unchanged.
-
-![Navigation and manipulation cameras alongside animated trajectory progress](docs/assets/first-success.gif)
-
-Original simulator observations, shown at 8 actions/second with a pause at the
-end. The map adds base position, heading, and progress along the successful path.
-Its replayed camera hashes match all 152 original live images, aligning the map
-with both camera views. Playback is accelerated; the timing below includes the
-original search/execution work, excluding the later visualization replay.
-See [trajectory coordinates](docs/assets/first-success-trajectories.json) and
-[reproduction commands](docs/native.md#trajectory-visualization).
-
-| Measured on 2026-10-09 | Result |
-| --- | --- |
-| Live task outcome | Success, **zero recorded cost** |
-| Search continuations | **2 of 8 allowed**; first failed, second succeeded |
-| Executed trajectory | **75 actions**, all 75 state/transition checks matched |
-| Search time | 180.3 s, including worker reset/replay |
-| Candidate preview / live execution | 48.3 s / 61.3 s |
-| Complete run | 339.8 s, including live startup and cleanup |
-| Hardware | One shared NVIDIA H100 80 GB; one rollout worker |
-
-This is a **selected development example**, not a held-out benchmark or a
-success-rate estimate. Task row 0, episode seed 1909, 200-action cap, two
-policy-ranked candidate actions, and continuation seeds 4100–4103. Earlier
-experiments informed this choice. The preview is an additional disposable
-worker call, separate from the two search continuations. Six allowed
-continuations were left unused; they were not measured in this run.
-The [result receipt](docs/assets/first-success.json) retains both evaluated
-outcomes, the action sequence, state hashes, timings, and source identities.
-
-### Reset, replay, and compare branches
-
-Two additional episodes from the earlier development study show how workers
-reconstruct a search state. Each column **resets the same seeded episode,
-replays the saved live actions, then tries a continuation**. These are selected
-recorded `BestOfN` branches, separate from the `FirstSuccess` example above.
-
-![Two branches from episode seed 892: reset to the same root, then a successful continuation and a failed continuation](docs/assets/branches-seed892.gif)
-
-**Episode 0 / seed 892:** the prefix is empty. The same initial candidate and
-different continuation seeds yield a zero-cost success after 74 actions and
-no success at the 150-action limit. Two of four recorded branches are shown.
-
-![Three branches after reconstructing a 40-action prefix: zero-cost success, costly success, and no success](docs/assets/branches-prefix40.gif)
-
-**Episode 1 / seed 1909:** every worker replays the same **40 live actions**
-before branching. Three of twelve recorded continuations are shown: success
-with cost 0 after 98 more actions, success with cost 3 after 103, and no success
-after the remaining 160 actions. All three use the same candidate action and
-different policy continuation seeds. A successful grasp can still incur cost.
-
-Navigation/manipulation images and base trajectories come from native replays.
-Cyan paths mark the shared prefix; each branch's color marks its continuation.
-Playback aligns action counts at 8 actions/second; completed branches hold
-their final frame. Captures were collected sequentially. Regenerated actions,
-rewards/costs, termination, and final observations match the saved branches;
-full reset/prefix states match across the reconstructed workers. The older
-study did not save original intermediate state hashes or root snapshots.
-These selected examples are not success-rate estimates. See the
-[replay receipts and reproduction commands](docs/native.md#branch-comparison-animations).
-
-### Why this method is inexpensive
-
-`FirstSuccess` tries candidates in caller priority order and evaluates seeds in
-small worker batches. It stops after the first batch containing a completed
-zero-cost trajectory, saving that trajectory as `plan.witness`. Execution uses
-the saved actions and compares cameras, exposed physics, cost bookkeeping,
-policy memory, rewards, and termination at every step. A mismatch raises before
-the next action; without a successful witness, no trajectory is executed.
-
-This avoids spending the full sample budget after a usable solution is found.
-It needs neither a value model nor an exhaustive action tree. It offers no
-optimality guarantee, and observed zero cost is not a guarantee of future safety.
-See [the execution contract](docs/api.md#first-success-and-checked-execution).
-
-In a [prepared native environment](docs/native.md):
-
-```sh
-PYTHONHASHSEED=0 CUBLAS_WORKSPACE_CONFIG=:4096:8 xvfb-run -a \
-  python examples/native_first_success.py \
-  --config runs/native.json --policy-config runs/policy.json \
-  --out runs/first-success --task-id 0 --seed 1909 \
-  --episode-limit 200 --workers 1 --vulkan-device 0 \
-  --candidates 2 --sample-seeds 4100 4101 4102 4103 --save-frames
-```
-
-The simulator, tasks/assets, compatible SafeVLA environment, and checkpoint are
-external dependencies. This local release draft targets the tested native
-environment. See [setup requirements](docs/native.md) and
-[validation status](docs/release.md).
-
-The same 75-action result also reproduced in a fresh isolated Python environment
-on the existing host, with all 45 tests passing. The
-[environment-check receipt](docs/assets/apex-fresh-environment.json) records the
-reused simulator inputs and six dependency-version conflicts reported by `pip check`.
+These are selected development results, not a success-rate estimate or a general
+safety guarantee. The [website](https://tumeteor.github.io/safety-chores-rl/#explorer)
+also shows unsuccessful and costly branches from separate recorded episodes.
+See the [result receipt](docs/assets/first-success.json),
+[native reproduction guide](docs/native.md), and [release assessment](docs/release.md).
 
 ## Try the portable examples
 
@@ -124,13 +31,22 @@ python examples/fast_search.py --workers 2
 python examples/benchmark_search.py --workers 2
 ```
 
-| Portable demonstration | Result |
-| --- | --- |
-| Synthetic known-winner problem | Successive halving uses 20 rollouts versus 64 exhaustive evaluations; same winner |
-| Synthetic grid task | Beam planning with live replanning reaches the goal in 6 actions, zero cost |
+The portable examples demonstrate the API without a native simulator.
+`BestOfN`, `SuccessiveHalving`, `BeamSearch`, and `RecedingHorizon` are also
+available. Workers reconstruct branches by reset and action replay; the API
+does not provide a hidden physics-state clone. See [API semantics](docs/api.md).
 
-These demonstrate the API, not native benchmark performance. `BestOfN`,
-`SuccessiveHalving`, `BeamSearch`, and `RecedingHorizon` remain available for
-other search objectives. Workers reconstruct each branch by reset and action
-replay; the API does not provide a hidden physics-state clone. Exact request
-caching reuses valid results within a session. See [API semantics](docs/api.md).
+Native experiments require an external simulator player, tasks/assets, compatible
+SafeVLA environment, and checkpoint. The selected 75-action result reproduced in
+an isolated Python environment on Apex with all 45 tests passing; the
+[environment receipt](docs/assets/apex-fresh-environment.json) also records six
+dependency-version conflicts. This is a **development preview for the tested
+native environment**.
+
+## Documentation
+
+- [Native setup, reproduction, and visualization](docs/native.md)
+- [API and execution contract](docs/api.md)
+- [Validation and release status](docs/release.md)
+- [Website build and deployment](docs/website.md)
+- [Third-party notices](THIRD_PARTY_NOTICES.md)

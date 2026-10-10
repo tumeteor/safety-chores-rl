@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Native simulator rollouts, reset-and-replay workers, and checked trajectory execution for Safety-CHORES. Explore real robot camera views and recorded branches.">
+  <meta name="theme-color" content="#f5f5f0">
+  <meta property="og:title" content="Safety-CHORES-RL — Simulate a path. Check every step.">
+  <meta property="og:description" content="Explore native rollouts, reconstructed search states, and trajectories with different outcomes.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Safety-CHORES-RL — Simulate a path. Check every step.</title>
+  <!-- canonical -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Safety-CHORES-RL home"><img src="favicon.svg" width="30" height="30" alt=""><span>Safety-CHORES<span class="brand-suffix"> / RL</span></span></a>
+    <nav aria-label="Main navigation"><a href="#method">Method</a><a href="#explorer">Explore</a><a href="#evidence">Evidence</a><a href="guides/native.html">Documentation <span aria-hidden="true">↗</span></a></nav>
+  </header>
+  <main id="main">
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div class="eyebrow"><span class="status-dot"></span> A DEVELOPMENT PREVIEW <span class="eyebrow-divider">/</span> NATIVE EMBODIED TASKS</div>
+      <div class="hero-grid">
+        <div><h1 id="hero-title">Simulate a path.<br><em>Check every step.</em></h1>
+          <p class="hero-description">Explore complete continuations before acting. Reconstruct the current state with reset and replay, keep a successful path, and check it during execution.</p>
+          <div class="hero-actions"><a class="button primary" href="#demo" id="watch-demo">Watch the native run <span aria-hidden="true">↘</span></a><a class="text-link" href="#explorer">Explore the trajectories <span aria-hidden="true">→</span></a></div>
+        </div>
+        <aside class="hero-result" aria-label="Selected native demonstration results"><span class="eyebrow">ONE SELECTED NATIVE RUN</span><div><strong>2<span>/8</span></strong><span>allowed rollouts used</span></div><div><strong>75</strong><span>executed actions checked</span></div><div><strong>0</strong><span>recorded cost</span></div><p>Task 0 · seed 1909<br>One H100 · one rollout worker</p></aside>
+      </div>
+      <figure class="main-demo" id="demo">
+        <div class="media-topline"><span><span class="status-dot"></span> NATIVE EXECUTION</span><span>Basketball grasp · FirstSuccess</span></div>
+        <video id="main-video" controls playsinline preload="none" poster="assets/first-success.png" aria-label="75-action native basketball grasp with navigation, manipulation, and trajectory views"><source src="assets/first-success.mp4" type="video/mp4"><a href="assets/first-success.gif">Open the animated GIF</a></video>
+        <figcaption><span>Two camera views. One checked trajectory.</span><span>8 actions/s · accelerated playback <a href="assets/first-success.gif">GIF ↗</a></span></figcaption>
+      </figure>
+      <p class="scope-note">A selected development example, not a benchmark success rate. The 75-action execution matched every saved state/transition check. <a href="assets/first-success.json">Inspect the run receipt ↗</a></p>
+    </section>
+
+    <section class="method-section" id="method">
+      <div class="wrap"><div class="section-heading"><div><span class="eyebrow">01 / HOW IT WORKS</span><h2>Return to the same state.<br>Explore a different future.</h2></div><p>Every branch owns a fresh native episode. Workers rebuild the search state by replaying actions, including policy inference and actual-action feedback.</p></div>
+        <ol class="method-steps">
+          <li><span class="step-number">01</span><h3>Reset</h3><p>Start the same task with the same episode seed in a fresh simulator.</p><span class="step-code">task + seed → initial state</span></li>
+          <li><span class="step-number">02</span><h3>Replay the prefix</h3><p>Execute the saved live actions to rebuild simulator state and policy history. Check the reconstructed root.</p><span class="step-code">saved actions → search state</span></li>
+          <li><span class="step-number">03</span><h3>Continue & compare</h3><p>Try a candidate action, then sample a continuation. Compare task completion and recorded cost.</p><span class="step-code">candidate + suffix seed → branch</span></li>
+        </ol>
+        <div class="method-footnote"><span class="small-label">THE PRACTICAL SEARCH</span><p><code>FirstSuccess</code> stops after the first valid worker batch containing a completed zero-cost trajectory. It retains the whole path and checks each executed transition. A mismatch stops execution before the next action.</p><a href="guides/api.html#first-success-and-checked-execution">Read the execution contract ↗</a></div>
+      </div>
+    </section>
+
+    <section class="wrap explorer-section" id="explorer" aria-labelledby="explorer-title">
+      <div class="section-heading"><div><span class="eyebrow">02 / EXPLORE THE RECORDED BRANCHES</span><h2 id="explorer-title">One root.<br>More than one outcome.</h2></div><p>Drag the timeline to see the shared prefix and the paths that follow. These coordinates come from native simulator replays.</p></div>
+      <div class="scene-tabs" role="tablist" aria-label="Recorded episode"><button id="tab-prefix40" role="tab" aria-selected="true" aria-controls="explorer-panel" data-scene="prefix40">40-action prefix <span>3 branches</span></button><button id="tab-seed892" role="tab" aria-selected="false" aria-controls="explorer-panel" tabindex="-1" data-scene="seed892">Initial-state root <span>2 branches</span></button></div>
+      <div class="explorer-panel" id="explorer-panel" role="tabpanel" aria-labelledby="tab-prefix40">
+        <div class="explorer-topline"><div class="phase-indicator" id="phase-label">01 / RESET</div><span id="episode-label">Task 1 · seed 1909</span></div>
+        <div class="explorer-grid"><div class="map-container"><svg id="trajectory-map" viewBox="0 0 760 440" role="img" aria-labelledby="map-title map-description"><title id="map-title">Recorded robot base trajectories</title><desc id="map-description">Interactive world X/Z map showing the shared replay prefix and different sampled continuations.</desc></svg><div class="map-key"><span><i class="key-prefix"></i> Shared prefix</span><span>Faint lines show complete recorded paths</span></div></div><div id="branch-readouts" class="branch-readouts" aria-label="Branch outcomes at the selected step"></div></div>
+        <div class="playback-controls"><button class="play-button" id="play-trajectory" aria-label="Play trajectories" disabled><span aria-hidden="true">▶</span> Play</button><label class="sr-only" for="trajectory-step">Episode action step</label><input id="trajectory-step" type="range" min="0" max="200" value="0" disabled><output id="step-output" for="trajectory-step">0 / 200</output><button class="reset-button" id="reset-trajectory" aria-label="Reset trajectory playback" disabled>Reset</button></div>
+        <p id="phase-description" class="phase-description" aria-live="polite">Loading the recorded trajectories…</p>
+      </div>
+      <noscript><p>The interactive map needs JavaScript. Both recorded comparison videos below are available without it.</p></noscript>
+      <p class="scope-note">Robot base X/Z coordinates in metres. Room outlines omit doors and furniture; they are not a collision map. Rotation and arm motion may leave the base in place.</p>
+
+      <div class="comparison-grid">
+        <article class="comparison"><div class="comparison-heading"><span class="eyebrow">EPISODE 1 / SEED 1909</span><h3>Replay 40 actions. Then branch.</h3><p>Same candidate, three continuation seeds. Zero-cost success, costly success, and no success at the limit.</p></div><video controls playsinline preload="none" poster="assets/branches-prefix40.png" aria-label="Reset and replay 40 actions, followed by three continuations with different outcomes"><source src="assets/branches-prefix40.mp4" type="video/mp4"><a href="assets/branches-prefix40.gif">Open the comparison GIF</a></video><div class="comparison-links"><a href="assets/branches-prefix40.gif">Download GIF ↗</a><a href="assets/branches-prefix40.json">Replay receipt ↗</a></div></article>
+        <article class="comparison"><div class="comparison-heading"><span class="eyebrow">EPISODE 0 / SEED 892</span><h3>Same start. Different continuations.</h3><p>An empty prefix makes reconstruction immediate. One continuation succeeds; the other reaches the action limit.</p></div><video controls playsinline preload="none" poster="assets/branches-seed892.png" aria-label="Two continuations from the same initial state, one success and one failure"><source src="assets/branches-seed892.mp4" type="video/mp4"><a href="assets/branches-seed892.gif">Open the comparison GIF</a></video><div class="comparison-links"><a href="assets/branches-seed892.gif">Download GIF ↗</a><a href="assets/branches-seed892.json">Replay receipt ↗</a></div></article>
+      </div>
+      <p class="scope-note">Selected branches from the earlier <code>BestOfN</code> study: 3 of 12 at the 40-action root, and 2 of 4 at the initial root. Captured sequentially, displayed by action count. These are separate from the FirstSuccess demonstration.</p>
+    </section>
+
+    <section class="evidence-section" id="evidence"><div class="wrap"><div class="section-heading"><div><span class="eyebrow">03 / EVIDENCE & SCOPE</span><h2>Measured behavior.<br>Visible limitations.</h2></div><p>Receipts retain the selected actions, outcomes, timings, and verification scope. The current release is a development preview for a tested native environment.</p></div>
+      <div class="evidence-table" role="table" aria-label="Recorded validation evidence">
+        <div role="row"><div role="cell"><strong>75 / 75</strong><span>live execution checks matched</span></div><p role="cell">The FirstSuccess example compares each executed state and transition with its saved witness. Search took 180.3 s; the complete run took 339.8 s.</p><a role="cell" href="assets/first-success.json">Run receipt ↗</a></div>
+        <div role="row"><div role="cell"><strong>5 branches</strong><span>regenerated from saved seeds</span></div><p role="cell">All 585 continuation actions and 120 prefix actions reproduced their recorded transition evidence. The captured images passed 1,420 camera hash checks.</p><a role="cell" href="guides/native.html#branch-comparison-animations">Verification scope ↗</a></div>
+        <div role="row"><div role="cell"><strong>45 tests</strong><span>passed in an isolated Python environment</span></div><p role="cell">The same 75-action native result reproduced on Apex. Existing simulator inputs were reused; six dependency constraints remain unresolved.</p><a role="cell" href="assets/apex-fresh-environment.json">Environment receipt ↗</a></div>
+      </div>
+      <details class="scope-details"><summary>What these results establish—and what remains open <span aria-hidden="true">+</span></summary><div><p>Workers reconstruct state through reset and action replay. The API does not clone hidden physics state. The FirstSuccess example checked original per-step state hashes; the older branch study retained transitions and endpoint observations, but not original root snapshots or intermediate state hashes.</p><p>Full captured prefix states agree across the new branch reconstructions. This is bounded replay evidence, not a general determinism guarantee. Zero recorded cost in an example does not establish general safety or policy efficacy.</p><p>The native player, assets, SafeVLA source, and checkpoint are external. The broader four-case development study had no safe successes for either evaluated controller. Read the <a href="guides/release.html">release assessment</a> for all outcomes, dependency conflicts, and known limitations.</p></div></details>
+    </div></section>
+
+    <section class="wrap reproduce-section" id="reproduce"><div><span class="eyebrow">04 / GET STARTED</span><h2>Try the API.<br>Bring your simulator.</h2><p>The portable examples run without a native simulator. Native experiments require the documented player, assets, policy, and checkpoint.</p><div class="resource-links"><a href="guides/native.html">Native setup & reproduction <span>↗</span></a><a href="guides/api.html">Rollout API & execution semantics <span>↗</span></a><a href="guides/release.html">Development release status <span>↗</span></a><a href="https://github.com/tumeteor/safety-chores-rl">Source on GitHub <span>↗</span></a></div></div><div class="code-panel"><div class="code-heading"><span>PORTABLE EXAMPLES</span><button class="copy-button" data-copy="quickstart-code">Copy</button></div><pre><code id="quickstart-code">git clone https://github.com/tumeteor/safety-chores-rl.git
+cd safety-chores-rl
+python -m pip install -e ".[test]"
+python -m pytest -q
+python examples/fast_search.py --workers 2</code></pre><p>Native workflow: reconstruct → search → retain witness → checked execution.</p><span id="copy-status" class="sr-only" aria-live="polite"></span></div></section>
+  </main>
+  <footer class="wrap site-footer"><a class="brand" href="./"><img src="favicon.svg" width="25" height="25" alt=""><span>Safety-CHORES / RL</span></a><span>Development evidence · October 2026</span><a href="guides/third-party.html">Third-party notices</a><a href="https://github.com/tumeteor/safety-chores-rl">GitHub ↗</a></footer>
+</body>
+</html>

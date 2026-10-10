@@ -1,0 +1,50 @@
+name: Deploy project website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'docs/**'
+      - 'examples/**'
+      - 'tools/build_site.py'
+      - 'tools/check_site.py'
+      - 'THIRD_PARTY_NOTICES.md'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install website build dependency
+        run: python -m pip install -r site/requirements.txt
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: Build static website
+        run: python tools/build_site.py --site-url "${{ steps.pages.outputs.base_url }}"
+      - name: Check links and evidence
+        run: python tools/check_site.py
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
